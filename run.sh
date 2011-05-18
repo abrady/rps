@@ -1,0 +1,1 @@
+sudo ../node_modules/.bin/supervisor -w rps.js -w . "server.js"

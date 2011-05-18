@@ -1,0 +1,23 @@
+<head>
+</head>
+<body>
+<div id="fb-root"/>
+
+<script src="https://connect.facebook.net/en_US/all.js"></script>
+  // http://static.ak.fbcdn.net/connect/en_US/core.debug.js
+  FB.init({
+    appId : '224658110883993',
+    status : true,
+    cookie : true,
+    xfbml : false,
+  });
+
+FB.getLoginStatus(function(response) {
+  if (response.session) {
+    // logged in and connected user, someone you know
+  } else {
+    // no user session available, someone you dont know
+  }
+});
+</script>
+</body>
