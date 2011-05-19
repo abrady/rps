@@ -1,0 +1,9 @@
+Rock Paper Scissors, the game!
+- appid: 224658110883993
+- d37dfe315494b6959a59a8571c7a8f51
+
+* Settings:
+** alskdjfjfhg : page path
+Use Case:
+* Invite Facebook friend to rock-paper-scissors game
+* 

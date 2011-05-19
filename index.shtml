@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>    
+    <link rel="stylesheet" type="text/css" href="/client/style.css" />
+    <script src="http://connect.facebook.net/en_US/all.js"></script>
+    <script>
+      var fb_app_id = '224658110883993';
+    </script>
+#include '/engine/include/min.include'
+    <script type="text/javascript" src="/client/publish.js"></script>
+    <script>
+      function init()
+      {
+        
+      }
+    </script>
+  </head>
+  <body
+    onload="init();"
+     >
+    <div id="fb-root"></div>
+    <div id="gameui"></div>
+    <div id="gamebody"></div>
+  </body>
+</html>

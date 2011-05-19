@@ -1,1 +1,1 @@
-sudo ../node_modules/.bin/supervisor -w rps.js -w . "server.js"
+sudo "../node_modules/.bin/supervisor" --debug 5858 "server.js"
