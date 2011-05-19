@@ -108,41 +108,54 @@ function req_handler(req, res)
         return;
     }
     else if('cheevo_update' == command) {
-        sys.debug(str_from_req(req))
+//        sys.debug(str_from_req(req))
         sys.debug('cheevo_update');
-        post_handler(
-            req,
-            function(body) {
-                // creating: https://graph.facebook.com/me/games.achieves?achievement=<cheevo_url>&access_token=<tok>&client_secret=<secret>
-				debugger;
-                var fb_info = fbinfo_from_cookie(req.headers.cookie);
-                var params = params_from_url(req.url);
-                var cheevo = params.cheevo || 'test_cheevo';
-                var value = params.value || 100;
-                var cheevo_url = encode('https://abrady.xen.prgmr.com/cheevo/' + cheevo);
-                var path = '/games.achieves?achievement='+cheevo_url+'&access_token='+fb_info.token+'&client_secret='+app_secret;
-				sys.debug('posting cheevo to ' + path);
-                https.get(
-                    { host: 'graph.facebook.com', path: path }, 
-                    function(res) {
-						console.log("statusCode: ", res.statusCode);
-						console.log("headers: ", res.headers);
-						res.on(
-                            'data',
-                            function(d) {
-								sys.debug('graph data:'+d);
-							}
-                        );
-					}
-                ).on(
-                    'error', 
-                    function(e) {
-						console.error(e);
+
+        // creating: https://graph.facebook.com/me/games.achieves?achievement=<cheevo_url>&access_token=<tok>&client_secret=<secret>
+		debugger;
+        var fb_info = fbinfo_from_cookie(req.headers.cookie);
+        var params = params_from_url(req.url);
+        var cheevo = params.cheevo || 'test_cheevo';
+        var value = params.value || 100;
+        var cheevo_url = escape('abrady.xen.prgmr.com/cheevo/' + cheevo + '.html');
+        var path = '/me/games.achieves?';
+        var body = 'achievement='+cheevo_url+'&access_token='+escape(fb_info.access_token)+'&client_secret='+app_secret;
+		sys.debug('posting cheevo to ' + path);
+        var req = https.request(
+            { 
+                host: 'graph.facebook.com', 
+                method: 'POST',
+                path: path
+            }, 
+            function(res) {
+				console.log("statusCode: ", res.statusCode);
+				console.log("headers: ", res.headers);
+				res.on(
+                    'data',
+                    function(d) {
+						sys.debug('graph data:'+d);
 					}
                 );
-            });
+			}
+        )
+        req.on(
+            'error', 
+            function(e) {
+				console.error(e);
+			}
+        );
+        req.end(body);
         return;
     }
+    else if('cheevo' == command) {
+        sys.debug('cheevo');
+        //sys.debug(str_from_req(req))
+        pathname = 'client/cheevo/foo.shtml';
+        sys.debug('sending ' + pathname);
+        comm.sendFile(req, res, pathname);
+        return;
+    }
+
     sys.debug('unkown command pathname is '+pathname+' root is ' + command);   
 }
 

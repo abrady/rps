@@ -6,19 +6,21 @@
     <script>
       var fb_app_id = '224658110883993';
     </script>
-#include '/engine/include/min.include'
-    <script type="text/javascript" src="/client/rps.js"></script>
-    <script type="text/javascript" src="/client/publish.js"></script>
+<!-- include '/engine/include/min.include' -->
+<!--     <script type="text/javascript" src="/client/rps.js"></script> -->
+<!--     <script type="text/javascript" src="/client/publish.js"></script> -->
     <script>
     </script>
   </head>
-  <body
-    onresize="Init.winresize();"
-    onload="Init.init();"
-    onorientationchange="Init.winresize();"
-    onunload="Init.quit()">
+  <body>
+    <!-- onresize="Init.winresize();" -->
+    <!-- onload="Init.init();" -->
+    <!-- onorientationchange="Init.winresize();" -->
+    <!-- onunload="Init.quit()" -->
     <div id="fb-root"></div>
     <div id="gameui"></div>
     <div id="gamebody"></div>
+
+    <script type="text/javascript" src="/client/simple.js"></script> 
   </body>
 </html>
