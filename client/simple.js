@@ -9,6 +9,7 @@ FB.init({
 function on_loggged_in()
 {
     fb_logged_in = true;
+    var root = document.getElementById('fb-root');
     var div = document.createElement('div');
     var markup = '<form name="input" action="cheevo_update" method="get">\
     Achievement: <input type="text" name="cheevo" />\
@@ -16,9 +17,22 @@ function on_loggged_in()
         <input type="submit" value="Submit" />\
     </form>';
     div.innerHTML = markup;
-    
-    var root = document.getElementById('fb-root')
     root.appendChild(div);
+    
+    xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange=function()
+    {   
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            var div = document.createElement('div');
+            div.innerHTML = xmlhttp.responseText;
+            root.appendChild(div);
+            window.cheevos = JSON.parse(xmlhttp.responseText);
+        }
+    }
+    xmlhttp.open("POST","cheevo_get",true);
+    xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+    xmlhttp.send("access_token="+FB.access_token);
 }
 
 if (fb_app_id) {
