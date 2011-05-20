@@ -93,7 +93,41 @@ function post_handler(request, callback) {
 
 var user_info = [];
 
-function graph_request(path, end_cb, body) {
+// use this to query data from open graph
+function graph_get(path,end_cb) {
+//    sys.debug('graph_get:' + path);
+    data = '';
+    https.get(
+        { 
+            host: 'graph.facebook.com',
+            path: path 
+        }, 
+        function(res) {
+			res.on(
+                'data',
+                function(d) {
+//					sys.debug('graph data:'+d);
+                    data += d;
+				}
+            );
+            res.on(
+                'end',
+                function () 
+                {
+                    end_cb(data); 
+                }
+            );
+		}
+    ).on(
+        'error', 
+        function(e) {
+            console.error(e);
+        }
+    );
+}
+
+function graph_request(path, body, end_cb) {
+    sys.debug('graph_request:' + path + ' body: ' + body);
     var data = '';
     var graph_req = https.request(
         { 
@@ -102,8 +136,6 @@ function graph_request(path, end_cb, body) {
             path: path
         }, 
         function(res) {
-			//console.log("statusCode: ", res.statusCode);
-			//console.log("headers: ", res.headers);
 			res.on(
                 'data',
                 function(d) {
@@ -142,6 +174,8 @@ function req_handler(req, res)
     var split = pathname.split('/')
     var command = split[1];
 //    sys.debug('pathname is '+pathname+' root is ' + command);
+
+    // all servable files live in the client/ or engine/ directories
     if(-1 < ['client','engine'].indexOf(command)){
         sys.debug('sending ' + pathname);
         comm.sendFile(req, res, pathname);
@@ -158,31 +192,13 @@ function req_handler(req, res)
         var cheevo_url = escape('abrady.xen.prgmr.com/cheevo/' + cheevo + '.html');
         var path = '/me/games.achieves?';
         var body = 'achievement='+cheevo_url+'&access_token='+escape(fb_info.access_token)+'&client_secret='+app_secret;
-        var graph_req = https.request(
-            { 
-                host: 'graph.facebook.com', 
-                method: 'POST',
-                path: path
-            }, 
-            function(res) {
-				//console.log("statusCode: ", res.statusCode);
-				//console.log("headers: ", res.headers);
-				res.on(
-                    'data',
-                    function(d) {
-						sys.debug('graph data:'+d);
-					}
-                );
-			}
-        )
-        graph_req.on(
-            'error', 
-            function(e) {
-				console.error(e);
+        var graph_req = graph_request(
+            path,
+            body,
+            function(d) {
+				sys.debug('graph data:'+d);
 			}
         );
-        graph_req.end(body);
-
         comm.sendFile(req, res, index_fname);
         return;
     }
@@ -195,7 +211,13 @@ function req_handler(req, res)
         return;
     }
     else if('cheevo_get' == command) {
-        https.r https://graph.facebook.com/me/games.achieves?
+        var params = params_from_url(req.url);
+        graph_get(
+            '/me/games.achieves?access_token='+escape(params.access_token),
+            function (data) {
+                res.end(data);
+            }
+        );
     }
 
     sys.debug('unkown command pathname is '+pathname+' root is ' + command);   

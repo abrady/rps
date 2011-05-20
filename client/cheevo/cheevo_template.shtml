@@ -4,14 +4,13 @@
   <head>
     <title>The Foo</title>
     <meta property="og:type" content="og:games.achievement"/>
-    <meta property="og:url" content="http://abrady.xen.prgrm.com/cheevo/foo"/>
-    <meta property="og:title" content="The Foo Cheevo"/>
+#metatags
     <meta property="og:description"
           content="A group of U.S. Marines, under command of
                    a renegade general, take over Alcatraz and
                    threaten San Francisco Bay with biological
                    weapons."/>
-    <meta property="og:image" content="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/202970_1319289_7891739_q.jpg" />
+    <meta property="og:image" content="http://profile.ak.fbcdn.net/hprofile-ak-snc4/186053_827884427_6625972_q.jpg" />
     <meta property="og:points" content="100000" />
   </head>
 </html>
