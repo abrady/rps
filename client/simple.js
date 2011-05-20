@@ -19,7 +19,7 @@ function on_cheevos_recv(data)
         li.innerHTML = c.title
         l.appendChild(li);
     }
-    root.appendChild(l);
+//    root.appendChild(l);
 }
 
 function on_loggged_in()
@@ -63,7 +63,39 @@ if (fb_app_id) {
     );
 }
 
+function debug_log(str)
+{
+    var div = document.getElementById('debug_log');
+    if (div)
+        div.innerHTML += '<pre>'+str+"</pre><br>";
+    if(console)
+        console.log(str);
+}
+
 function cheevo_grant(cheevo) {
+    xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange=function()
+    {   
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            debug_log(xmlhttp.responseText);
+        }
+    }
+
     xmlhttp.open("GET","cheevo_grant?access_token="+FB._session.access_token+'&cheevo='+escape(cheevo),true);
+    xmlhttp.send();   
+}
+
+function action_grant(action) {
+    xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange=function()
+    {   
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            debug_log(xmlhttp.responseText);
+        }
+    }
+
+    xmlhttp.open("GET","action_grant?access_token="+FB._session.access_token+'&action='+escape(action),true);
     xmlhttp.send();   
 }

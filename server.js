@@ -5,6 +5,7 @@
 // "cookie": "fbs_224658110883993=\"access_token=224658110883993%7C2.AQDb6wR1yZvD1JCY.3600.1305795600.1-827884427%7Cc7sxBeGBSI3emGkVdDNKBuqY-HY&expires=1305795600&secret=AQCTzmT3i4WGUUXy&session_key=2.AQDb6wR1yZvD1JCY.3600.1305795600.1-827884427&sig=2bc606f1ac15e543d1c9044e649238d9&uid=827884427\"""
 // js: escape == urlencode, unescape == urldecode
 
+
 var hashlib = require("./lib/hashlib/build/default/hashlib");
 var sys = require("sys");
 var url = require("url");
@@ -13,6 +14,7 @@ var comm = require('./lib/comm');
 var util = require('./util');
 var rps = null;
 
+var base_url = 'abrady.xen.prgmr.com';
 var app_id =  '224658110883993';
 var app_secret = 'd37dfe315494b6959a59a8571c7a8f51';
 
@@ -99,7 +101,7 @@ function graph_get(path,end_cb) {
     data = '';
     https.get(
         { 
-            host: 'graph.facebook.com',
+            host: 'graph.facebook.com', 
             path: path 
         }, 
         function(res) {
@@ -126,8 +128,8 @@ function graph_get(path,end_cb) {
     );
 }
 
-function graph_request(path, body, end_cb) {
-    sys.debug('graph_request:' + path + ' body: ' + body);
+function graph_post(path, body, end_cb) {
+    sys.debug('graph_post:' + path + ' body: ' + body);
     var data = '';
     var graph_req = https.request(
         { 
@@ -162,6 +164,43 @@ function graph_request(path, body, end_cb) {
 }
 
 
+function og_action_get(action_name, access_token) 
+{
+    //    curl 'https://graph.dev.facebook.com/me/superfbrps:paper_covers_rock?access_token=224658110883993%7C2.AQBXJXLB4afinN9o.3600.1305936000.0-827884427%7CE9Fg6j9zpTSlhiSwyYb1_aqc454'
+    graph_get(
+        '/me/superfbrps:'+action_name+'?access_token='+escape(access_token), 
+        function(d) {
+			sys.debug('og_action_get:'+d);
+            res.end  ('og_action_get:'+d);
+		} 
+    );
+}
+
+function og_action_create(action_name, access_token)
+{
+    // curl -F 'access_token=224658110883993|2.AQBXJXLB4afinN9o.3600.1305936000.0-827884427|E9Fg6j9zpTSlhiSwyYb1_aqc454' \
+    //  -F 'to=http://example.com/' \
+    //     'https://graph.dev.facebook.com/me/superfbrps:paper_covers_rock'
+    var body = 'to='+escape(base_url)'+&'
+        + 'access_token='+escape(access_token);
+
+    graph_post(
+        '/me/superfbrps:'+action_name,
+        body,
+        function(d) {
+			sys.debug('og_action_create:'+action_name+':'+d);
+            res.end  ('og_action_create:'+action_name+':'+d);
+		} 
+    );
+}
+
+// function og_action_delete(action_id, access_token)
+// {
+//     // curl -X DELETE \
+//     //  -F 'access_token=224658110883993|2.AQBXJXLB4afinN9o.3600.1305936000.0-827884427|E9Fg6j9zpTSlhiSwyYb1_aqc454' \
+//     //     'https://graph.dev.facebook.com/{id_from_create_call}'
+// }
+
 function req_handler(req, res) 
 {
 //    sys.debug(str_from_req(req))
@@ -192,14 +231,14 @@ function req_handler(req, res)
         var cheevo_url = escape('abrady.xen.prgmr.com/client/cheevo/' + cheevo + '.shtml');
         var path = '/me/games.achieves?';
         var body = 'achievement='+cheevo_url+'&access_token='+escape(fb_info.access_token)+'&client_secret='+app_secret;
-        var graph_req = graph_request(
+        var graph_req = graph_post(
             path,
             body,
             function(d) {
-				sys.debug('graph data:'+d);
+				sys.debug('og achieves response:'+d);
+                res.end('og achieves response: '+cheevo+' response: '+d);
 			}
         );
-        comm.sendFile(req, res, index_fname);
         return;
     }
     else if('cheevo_get' == command) {
@@ -212,7 +251,24 @@ function req_handler(req, res)
         );
         return;
     }
+    else if('action_grant' == command) {
+        // TODO: check list of available actions
+        sys.debug('action_update');
 
+        var fb_info = fbinfo_from_cookie(req.headers.cookie);
+        var params = params_from_url(req.url);
+        og_action_create(action,params.access_token);
+        return;
+    }
+    else if('action_get' == command) {
+        // TODO: check list of available actions
+        sys.debug('action_update');
+
+        var fb_info = fbinfo_from_cookie(req.headers.cookie);
+        var params = params_from_url(req.url);
+        og_action_get(action,params.access_token);
+        return;
+    }
     sys.debug('unkown command pathname is '+pathname+' root is ' + command);   
 }
 
