@@ -1,0 +1,9 @@
+<head xmlns:superfbrps="http://apps.facebook.com/superfbrps/ns#">
+  <meta property="og:type" content="superfbrps:rock" /> 
+  <meta property="og:title" content="Rock" /> 
+  <meta property="og:image" content="http://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Balanced_Rock.jpg/220px-Balanced_Rock.jpg" /> 
+  <meta property="og:description" content="The Rock that makes scissors tremble" /> 
+</head>
+<body>
+<h1>This Is For Open Graph Only, not for looking at! go-way!!</h1>
+</body>

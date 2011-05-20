@@ -181,15 +181,15 @@ function req_handler(req, res)
         comm.sendFile(req, res, pathname);
         return;
     }
-    else if('cheevo_update' == command) {
-//        sys.debug(str_from_req(req))
+    else if('cheevo_grant' == command) {
+        // TODO: check list of available cheevos
         sys.debug('cheevo_update');
 
         var fb_info = fbinfo_from_cookie(req.headers.cookie);
         var params = params_from_url(req.url);
         var cheevo = params.cheevo || 'test_cheevo';
         var value = params.value || 100;
-        var cheevo_url = escape('abrady.xen.prgmr.com/cheevo/' + cheevo + '.html');
+        var cheevo_url = escape('abrady.xen.prgmr.com/client/cheevo/' + cheevo + '.shtml');
         var path = '/me/games.achieves?';
         var body = 'achievement='+cheevo_url+'&access_token='+escape(fb_info.access_token)+'&client_secret='+app_secret;
         var graph_req = graph_request(
@@ -202,14 +202,6 @@ function req_handler(req, res)
         comm.sendFile(req, res, index_fname);
         return;
     }
-    else if('cheevo' == command) {
-//        sys.debug(str_from_req(req))
-        cheevo = split[2].split('.')[0];
-        comm.setMetatagsCheevo(cheevo);
-        sys.debug('cheevo: ' + cheevo);
-        comm.sendFile(req,res,'client/cheevo/cheevo_template.shtml')
-        return;
-    }
     else if('cheevo_get' == command) {
         var params = params_from_url(req.url);
         graph_get(
@@ -218,6 +210,7 @@ function req_handler(req, res)
                 res.end(data);
             }
         );
+        return;
     }
 
     sys.debug('unkown command pathname is '+pathname+' root is ' + command);   

@@ -6,11 +6,6 @@
     <script>
       var fb_app_id = '224658110883993';
     </script>
-<!-- include '/engine/include/min.include' -->
-<!--     <script type="text/javascript" src="/client/rps.js"></script> -->
-<!--     <script type="text/javascript" src="/client/publish.js"></script> -->
-    <script>
-    </script>
   </head>
   <body>
     <!-- onresize="Init.winresize();" -->
@@ -18,10 +13,18 @@
     <!-- onorientationchange="Init.winresize();" -->
     <!-- onunload="Init.quit()" -->
     <div id="fb-root"></div>
-    <div id="cheevos">Your Achievements:</div>
+    <div id="cheevo_grant">
+      <h4>Give Yourself Achievements</h4>
+      <button onclick="cheevo_grant('win_with_rock')">Give 'Won With Rock' Achievement</button><br>
+      <button onclick="cheevo_grant('win_with_paper')">Give 'Won With Paper' Achievement</button><br>
+      <button onclick="cheevo_grant('win_with_scissors')">Give 'Won With Scissors' Achievement</button><br>
+    </div>
+    <p.>
+    <div id="cheevos">
+      <h4>Your Achievements:</h4>
+    </div>
     <div id="gameui"></div>
     <div id="gamebody"></div>
-
     <script type="text/javascript" src="/client/simple.js"></script> 
   </body>
 </html>

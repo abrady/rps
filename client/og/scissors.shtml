@@ -1,0 +1,9 @@
+<head xmlns:superfbrps="http://apps.facebook.com/superfbrps/ns#">
+  <meta property="og:type" content="superfbrps:pair_of_scissors" /> 
+  <meta property="og:title" content="Scissors" /> 
+  <meta property="og:image" content="http://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Fiskars-scissors.jpg/220px-Fiskars-scissors.jpg" /> 
+  <meta property="og:description" content="Scissors, severer of Paper" /> 
+</head>
+<body>
+  This page is not meant to be viewed
+</body>

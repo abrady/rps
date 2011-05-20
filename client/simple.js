@@ -24,16 +24,7 @@ function on_cheevos_recv(data)
 
 function on_loggged_in()
 {
-    var root = document.getElementById('fb-root');
     fb_logged_in = true;
-    var div = document.createElement('div');
-    //     Score:       <input type="text" name="score" />\
-    var markup = '<form name="input" action="cheevo_update" method="get">\
-    Achievement: <input type="text" name="cheevo" />\
-        <input type="submit" value="Submit" />\
-    </form>';
-    div.innerHTML = markup;
-    root.appendChild(div);
     
     xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange=function()
@@ -70,4 +61,9 @@ if (fb_app_id) {
             }
         }
     );
+}
+
+function cheevo_grant(cheevo) {
+    xmlhttp.open("GET","cheevo_grant?access_token="+FB._session.access_token+'&cheevo='+escape(cheevo),true);
+    xmlhttp.send();   
 }
