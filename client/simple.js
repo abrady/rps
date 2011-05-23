@@ -1,5 +1,14 @@
 var fb_logged_in = false;
 
+function debug_log(str)
+{
+    var div = document.getElementById('debug_log');
+    if (div)
+        div.innerHTML += '<pre>'+str+"</pre><br>";
+    if(console)
+        console.log(str);
+}
+
 FB.init({
             appId  : fb_app_id,
             status : true, // check login status
@@ -25,7 +34,8 @@ function on_cheevos_recv(data)
 function on_loggged_in()
 {
     fb_logged_in = true;
-    
+    debug_log('access_token: ' + FB._session.access_token);
+
     xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange=function()
     {   
@@ -34,7 +44,7 @@ function on_loggged_in()
             on_cheevos_recv(xmlhttp.responseText);
         }
     }
-    xmlhttp.open("GET","cheevo_get?access_token="+FB._session.access_token,true);
+    xmlhttp.open("GET",'cheevo_get',true);
 //    xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 //    xmlhttp.send("access_token="+FB.access_token);
     xmlhttp.send();
@@ -63,15 +73,6 @@ if (fb_app_id) {
     );
 }
 
-function debug_log(str)
-{
-    var div = document.getElementById('debug_log');
-    if (div)
-        div.innerHTML += '<pre>'+str+"</pre><br>";
-    if(console)
-        console.log(str);
-}
-
 function cheevo_grant(cheevo) {
     xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange=function()
@@ -82,11 +83,11 @@ function cheevo_grant(cheevo) {
         }
     }
 
-    xmlhttp.open("GET","cheevo_grant?access_token="+FB._session.access_token+'&cheevo='+escape(cheevo),true);
+    xmlhttp.open("GET",'cheevo_grant?cheevo='+escape(cheevo),true);
     xmlhttp.send();   
 }
 
-function action_grant(action) {
+function action_grant(action,obj_name) {
     xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange=function()
     {   
@@ -96,6 +97,28 @@ function action_grant(action) {
         }
     }
 
-    xmlhttp.open("GET","action_grant?access_token="+FB._session.access_token+'&action='+escape(action),true);
+    xmlhttp.open("GET",'action_grant?action='+escape(action)+'&object='+obj_name,true);
     xmlhttp.send();   
+}
+
+function score_enter_listener(e) {
+    var keychar = String.fromCharCode(e.keyCode);
+    if (keychar != '\r') { // check for newline
+        var numcheck = /\d/;
+        return numcheck.test(keychar);
+    }
+
+    xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange=function()
+    {   
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            debug_log(xmlhttp.responseText);
+        }
+    }
+    var score_elt = document.getElementById('score_value');
+    xmlhttp.open("GET",'score_set?score='+escape(score_elt.value)+'&access_token='+escape(FB._session.access_token));
+    xmlhttp.send();
+    score_elt.value = '';
+    return false;
 }
