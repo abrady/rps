@@ -13,18 +13,31 @@
     <!-- onorientationchange="Init.winresize();" -->
     <!-- onunload="Init.quit()" -->
     <div id="fb-root"></div>
-    <div id="cheevo_grant">
+    <div id="cheevo_section">
       <h4>Give Yourself Achievements</h4>
-      <button onclick="cheevo_grant('win_with_rock')">Give 'Won With Rock' Achievement</button><br>
-      <button onclick="cheevo_grant('win_with_paper')">Give 'Won With Paper' Achievement</button><br>
-      <button onclick="cheevo_grant('win_with_scissors')">Give 'Won With Scissors' Achievement</button><br>
+      <button onclick="cheevo_grant('winwithrock3')">Give 'Won With Rock' Achievement</button><br>
+      <button onclick="cheevo_grant('winwithpaper3')">Give 'Won With Paper' Achievement</button><br>
+      <button onclick="cheevo_grant('winwithscissors4')">Give 'Won With Scissors' Achievement</button><br>
+    </div>
+    <div id="action_section">
+      <h4>Give Yourself Actions</h4>
+      <button onclick="action_grant('rockbreaksscissors', 'scissors3')">Rock Breaks Scissors</button><br>
+      <button onclick="action_grant('papercoversrock',    'rock')"   >Paper Covers Rock</button><br>
+      <button onclick="action_grant('scissorscutpaper',   'paper3')"  >Scissors Cut Paper</button><br>
     </div>
     <p.>
-    <div id="cheevos">
-      <h4>Your Achievements:</h4>
+    <div id="scores">
+      <h4>Set Score:</h4>
+      <input type="text" id="score_value" onkeyup="return score_enter_listener(event)"></input>
     </div>
-    <div id="gameui"></div>
-    <div id="gamebody"></div>
-    <script type="text/javascript" src="/client/simple.js"></script> 
+    <div id="cheevos">
+      <!-- <h4>Your Achievements:</h4> -->
+    </div>
+    <div id="debug_log_section">
+      <p/><p/><hr/><console>Debug Log:</console>
+      <p id="debug_log" style="padding: 10px; border: grey 1px solid">
+      </p>
+      <script type="text/javascript" src="/client/simple.js"></script>
+    </div>
   </body>
 </html>

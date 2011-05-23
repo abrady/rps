@@ -2,6 +2,9 @@ Rock Paper Scissors, the game!
 - appid: 224658110883993
 - d37dfe315494b6959a59a8571c7a8f51
 
+* Notes
+** og doesn't re-grab objects. this is a pain.
+
 * Settings:
 ** alskdjfjfhg : page path
 Use Case:

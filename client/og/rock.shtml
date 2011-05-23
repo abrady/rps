@@ -1,4 +1,6 @@
 <head xmlns:superfbrps="http://apps.facebook.com/superfbrps/ns#">
+  <meta property="fb:app_id" content="224658110883993" />
+  <meta property="og:url" content="http://abrady.xen.prgmr.com/client/og/rock.shtml" />
   <meta property="og:type" content="superfbrps:rock" /> 
   <meta property="og:title" content="Rock" /> 
   <meta property="og:image" content="http://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Balanced_Rock.jpg/220px-Balanced_Rock.jpg" /> 
