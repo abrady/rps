@@ -5,7 +5,7 @@
 // "cookie": "fbs_224658110883993=\"access_token=224658110883993%7C2.AQDb6wR1yZvD1JCY.3600.1305795600.1-827884427%7Cc7sxBeGBSI3emGkVdDNKBuqY-HY&expires=1305795600&secret=AQCTzmT3i4WGUUXy&session_key=2.AQDb6wR1yZvD1JCY.3600.1305795600.1-827884427&sig=2bc606f1ac15e543d1c9044e649238d9&uid=827884427\"""
 // js: escape == urlencode, unescape == urldecode
 
-var hashlib = require("./lib/hashlib/build/default/hashlib");
+//var hashlib = require("./lib/hashlib/build/default/hashlib");
 var sys = require("sys");
 var url = require("url");
 var http = require('http');
