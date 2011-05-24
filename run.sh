@@ -1,1 +1,1 @@
-sudo "../node_modules/.bin/supervisor" --debug 5858 "server.js"
+sudo "../node-supervisor/supervisor" --debug 5858 "server.js"
