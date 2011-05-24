@@ -36,6 +36,12 @@ function on_loggged_in()
     fb_logged_in = true;
     debug_log('access_token: ' + FB._session.access_token);
 
+	var rps = document.getElementById('rps_pre_login');
+	rps.hidden = true;
+
+	rps = document.getElementById('rps_body_root');
+	rps.hidden = false;
+
     xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange=function()
     {   
@@ -63,6 +69,7 @@ if (fb_app_id) {
                         if (response.session) {
                             on_loggged_in();
                         } else {
+							debug_log('failed to log in');
                             fb_logged_in = false;
                         }
                     }, 

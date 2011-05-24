@@ -16,12 +16,6 @@ Use Case:
 
 I've spent about a week now pretending to be a Facebook developer, and my overall impression is really positive barring a few cases below:
 
-*** The Node creation 'callback' behavior is confusing.
-
-When I want to create and achievement, or have open graph objects, I have to make them accessible on my web server for Facebook servers to come and get the information. 
-
-My preference would be to pass all the information along with the call itself, like a function call. 
-
 *** Creation and Caching of Nodes is Problematic.
 
 - I can't update an achievement once I've created it (as far as I can tell).
@@ -31,18 +25,27 @@ What this meant for me was that, when I screwed up an achievement somehow, I had
 
 I'd prefer an interface similar to the actions, where I create and edit the achievements explicitly in a different step than granting them, that would give me explicit control over what the data was rather than having to look for a request to come to know it was updated. Having a 'nocache' flag would also solve this, though it could be abused.
 
-*** Difficult To Understand Error Messages
+*** Misleading Error Messages
 
 There were two dumb mistakes made that were made more difficult to debug by vague error messages:
-- I had a typo in the og:url metadata. I could see the URL in the error message containing the og:url metadata getting hit, and the URL linter was able to parse the endpoint properly, but the error message was "type must be 'games.achievement', actually is ''". The error message had an URL in it, but that was the URL to get to the endpoint that had the metadata in it, not the url (from the metadata) that was being used to extract the og:type param.
-- I'd formatted my access_token improperly. The error code told me it was a stale access token.
+- I had a typo in the og:url metadata. I could see the URL in the error message containing the og:url metadata getting hit, and the URL linter was able to parse the endpoint properly, but the error message was "type must be 'games.achievement', actually is ''". If it had said 'og:url param http://foo unreachable' it would have been clearer.
+- I'd passed my access token and another argument concatenated together. The error code told me it was a stale access token instead of an invalid one. It'd be great to have it say 'access token should be this many characters etc.', but just saying 'invalid access token' would have gotten me to the problem more quickly.
 
-I'd prefer vague error messages over ones that are misleading.
+*** Can't Run Test servers
+
+It would be great if I could make calls to connect to the og using
+servers other than the one specified in the developer settings (even
+the domain restriction is limiting).
+
+Perhaps a github model where dev servers could register public keys for an app.
+
+*** The Node creation 'callback' behavior is confusing.
+
+When I want to create and achievement, or have open graph objects, I have to make them accessible on my web server for Facebook servers to come and get the information. 
+
+My preference would be to pass all the information along with the call itself, like a function call. 
 
 
 
-*** Test servers
-
-
-- App Creation: overwhelming, but not too confusing.
-
+*** Summary
+In summary: pretty cool
