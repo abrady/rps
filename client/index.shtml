@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
-  <head>    
+  <head>
     <link rel="stylesheet" type="text/css" href="/client/style.css" />
     <script src="http://connect.facebook.net/en_US/all.js"></script>
     <script>
-      var fb_app_id = '224658110883993';
+      var fb_app_id = {{config.app_id}};
     </script>
   </head>
   <body>

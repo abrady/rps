@@ -1,10 +1,10 @@
 <head xmlns:superfbrps="http://apps.facebook.com/superfbrps/ns#">
   <meta property="fb:app_id" content="224658110883993" />
-  <meta property="og:url" content="http://abrady.xen.prgmr.com/client/og/scissors.shtml" />
-  <meta property="og:type" content="superfbrps:scissors" /> 
-  <meta property="og:title" content="Scissors" /> 
-  <meta property="og:image" content="http://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Fiskars-scissors.jpg/220px-Fiskars-scissors.jpg" /> 
-  <meta property="og:description" content="Scissors, severer of paper" /> 
+  <meta property="og:url" content="http://{{config.host}}/client/og/scissors.shtml" />
+  <meta property="og:type" content="superfbrps:scissors" />
+  <meta property="og:title" content="Scissors" />
+  <meta property="og:image" content="http://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Fiskars-scissors.jpg/220px-Fiskars-scissors.jpg" />
+  <meta property="og:description" content="Scissors, severer of paper" />
 </head>
 <body>
   This page is not meant to be viewed

@@ -1,10 +1,10 @@
 <head xmlns:superfbrps="http://apps.facebook.com/superfbrps/ns#">
   <meta property="fb:app_id" content="224658110883993" />
-  <meta property="og:type" content="superfbrps:paper" /> 
-  <meta property="og:title" content="Paper" /> 
-  <meta property="og:image" content="http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/ManilaPaper.jpg/220px-ManilaPaper.jpg" /> 
-  <meta property="og:description" content="Paper, coverer of rock" /> 
-  <meta property="og:url" content="http://abrady.xen.prgmr.com/client/og/paper.shtml" />
+  <meta property="og:type" content="superfbrps:paper" />
+  <meta property="og:title" content="Paper" />
+  <meta property="og:image" content="http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/ManilaPaper.jpg/220px-ManilaPaper.jpg" />
+  <meta property="og:description" content="Paper, coverer of rock" />
+  <meta property="og:url" content="http://{{config.host}}/client/og/paper.shtml" />
 </head>
 <body>
 Do not use this. not for viewing.
