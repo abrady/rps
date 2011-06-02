@@ -15,7 +15,7 @@ FB.init({
             cookie : true, // enable cookies to allow the server to access the session
         });
 
-function on_cheevos_recv(data) 
+function on_cheevos_recv(data)
 {
     var root = document.getElementById('cheevos');
     var l = document.createElement('ul');
@@ -36,9 +36,15 @@ function on_loggged_in()
     fb_logged_in = true;
     debug_log('access_token: ' + FB._session.access_token);
 
+	var rps = document.getElementById('rps_pre_login');
+	rps.hidden = true;
+
+	rps = document.getElementById('rps_body_root');
+	rps.hidden = false;
+
     xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange=function()
-    {   
+    {
         if (xmlhttp.readyState==4 && xmlhttp.status==200)
         {
             on_cheevos_recv(xmlhttp.responseText);
@@ -63,9 +69,10 @@ if (fb_app_id) {
                         if (response.session) {
                             on_loggged_in();
                         } else {
+							debug_log('failed to log in');
                             fb_logged_in = false;
                         }
-                    }, 
+                    },
                     {perms:''}  // read_stream,publish_stream
                 );
             }
@@ -76,7 +83,7 @@ if (fb_app_id) {
 function cheevo_grant(cheevo) {
     xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange=function()
-    {   
+    {
         if (xmlhttp.readyState==4 && xmlhttp.status==200)
         {
             debug_log(xmlhttp.responseText);
@@ -84,13 +91,13 @@ function cheevo_grant(cheevo) {
     }
 
     xmlhttp.open("GET",'cheevo_grant?cheevo='+escape(cheevo),true);
-    xmlhttp.send();   
+    xmlhttp.send();
 }
 
 function action_grant(action,obj_name) {
     xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange=function()
-    {   
+    {
         if (xmlhttp.readyState==4 && xmlhttp.status==200)
         {
             debug_log(xmlhttp.responseText);
@@ -98,7 +105,7 @@ function action_grant(action,obj_name) {
     }
 
     xmlhttp.open("GET",'action_grant?action='+escape(action)+'&object='+obj_name,true);
-    xmlhttp.send();   
+    xmlhttp.send();
 }
 
 function score_enter_listener(e) {
@@ -110,7 +117,7 @@ function score_enter_listener(e) {
 
     xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange=function()
-    {   
+    {
         if (xmlhttp.readyState==4 && xmlhttp.status==200)
         {
             debug_log(xmlhttp.responseText);
