@@ -43,33 +43,29 @@
 
         <br />
         <button id="send-to-many">Send to Many</button>      
-        <button id="list-pending">List Pending</button>
-        <button id="clear-pending">Clear Pending</button>
         <script>
           document.getElementById('send-to-many').onclick = function() {
           var txtarea = document.getElementById('send-to-many-text');
           FB.ui(
-          {
-          method: 'apprequests',
-          message: txtarea.value,
-          }
+            {
+              method: 'apprequests',
+              message: txtarea.value,
+            }
           );
           }
         </script>
-        <script>
-          document.getElementById('list-pending').onclick = function() {
-            FB.api('/me/apprequests', requests_pending_show);
-          }
+        <!-- Not working right now -->
+        <!-- <button id="list-pending">List Pending</button> -->
+        <!-- <button id="clear-pending">Clear Pending</button> -->
+        <!-- <script> -->
+        <!--   document.getElementById('list-pending').onclick = function() { -->
+        <!--     FB.api('/me/apprequests', requests_pending_show); -->
+        <!--   } -->
       
-          document.getElementById('clear-pending').onclick = function() {
-            FB.api('/me/apprequests', function(response) {
-              var ids = [];
-              for (var i=0, l=response.data.length; i<l; i++) {
-                FB.api('/' + response.data[i].id, 'DELETE', requests_clear);
-              }
-            });
-          }
-        </script>
+        <!--   document.getElementById('clear-pending').onclick = function() { -->
+        <!--     FB.api('/me/apprequests', requests_clear_handler); -->
+        <!--   } -->
+        <!-- </script> -->
       </div>
       <div class="section">
         <h4>Test Mouse</h4>

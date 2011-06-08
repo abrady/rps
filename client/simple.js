@@ -156,9 +156,17 @@ function mouseout_test(n) {
 }
 
 function requests_pending_show(obj) {
-  debug_log(JSON.stringify(obj));
+  debug_log("pending requests: " + JSON.stringify(obj));
 }
 
 function requests_clear(res) {
-  debug_log("requests_clear " + res);
+  debug_log("cleared request " + res);
+}
+
+function requests_clear_handler(res) {
+  var ids = [];
+  for (var i=0, l=res.data.length; i<l; i++) {
+    debug_log("deleting " + res.data[i].id);
+//    FB.api('/' + res.data[i].id, 'DELETE', requests_clear);
+  }
 }
