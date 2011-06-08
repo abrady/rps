@@ -159,27 +159,45 @@ function og_action_create(res, action_name, object_name, access_token)
   );
 }
 
-// function og_action_delete(action_id, access_token)
-// {
-//     // curl -X DELETE \
-//     //  -F 'access_token=224658110883993|2.AQBXJXLB4afinN9o.3600.1305936000.0-827884427|E9Fg6j9zpTSlhiSwyYb1_aqc454' \
-//     //     'https://graph.dev.facebook.com/{id_from_create_call}'
-// }
-
-function og_score_set(res, score, access_token, app_secret)
+function og_score_set(res, score, access_token)
 {
   // https://graph.facebook.com/me/games.scores?
   var body =
     'score='+escape(score)
     + '&access_token='+escape(access_token)
-    + '&client_secret='+app_secret;
+    + '&client_secret='+config.app_secret;
 
   graph_post(
     '/me/games.scores?',
     body,
     function(d) {
       log.info('og_score_set:'+score+':'+d);
-      res.end  ('og_score_set:'+score+':'+d);
+      res.end ('og_score_set:'+score+':'+d);
+    }
+  );
+}
+
+function og_score_get_users(res, users, access_token)
+{
+  // https://graph.facebook.com/me/games.scores?
+  var users_body = {};
+  var body;
+  
+  for(var i = 0; i < users.length; ++i) {
+    users_body.id = users[i];
+  }
+
+  body =
+    'data:' + '[ ' + JSON.stringify(user_body) + ']'
+    + '&access_token='+escape(access_token)
+    + '&client_secret='+config.app_secret;
+
+  graph_get(
+    '/me/games.scores?',
+    body,
+    function(d) {
+      log.info('og_score_set:'+score+':'+d);
+      res.end ('og_score_set:'+score+':'+d);
     }
   );
 }
@@ -258,7 +276,15 @@ function req_handler(req, res)
     // https://graph.facebook.com/me/games.scores?
     log.info('score_set');
     var params = params_from_url(req.url);
-    og_score_set(res,params.score,params.access_token,config.app_secret);
+    og_score_set(res,params.score,params.access_token);
+    return;
+  }
+  else if('score_get_users' == command) {
+    // https://graph.facebook.com/me/games.scores?
+    // log.info('score_get: ' + params.users);
+    // var params = params_from_url(req.url);
+    // og_score_get_users(res,JSON.parse(unescape(params.users)),params.access_token);
+    res.end('');
     return;
   }
   else if('/favicon.ico' == pathname) {
@@ -273,11 +299,12 @@ function req_handler(req, res)
 // ========================================
 // Start the servers
 
-var port = 8081;
+log.info("Running app " + config.app_name + " id " + config.app_id);
+log.info("connecting to graph url " + config.graph_url);
 http.createServer(
   req_handler
-).listen(port);
-log.info('HTTP Server running on port' + port);
+).listen(config.http_port);
+log.info('HTTP Server running on port' + config.http_port);
 
 // curl -k https://localhost:8000/
 var options = {
@@ -285,6 +312,6 @@ var options = {
   cert: fs.readFileSync('conf/server.crt')
 };
 
-https.createServer(options, req_handler).listen(port+1);
-log.info('HTTPS Server running:' + (port+1));
+https.createServer(options, req_handler).listen(config.https_port);
+log.info('HTTPS Server running:' + (config.https_port));
 

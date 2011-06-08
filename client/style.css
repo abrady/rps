@@ -1,6 +1,32 @@
-.chess {
-  color: #fff;
-  background: #5B74A8;
-  font-size:22px;
+.rps {
+  background: url("rock.jpg") repeat;
+  font-family: Georgia, Times, serif;
 }
 
+
+.section {
+  background-color: white;
+  border: 1px solid #777;
+  border-bottom: 1px solid #333;
+  display: inline-block;
+  padding: 16px;
+  min-height: 90px;
+  margin: 8px 8px 0px 0px;
+  float: left;
+}
+
+h4 {
+ font-size: 14px;
+ margin: 0 0 8px 0;;
+}
+
+
+#debug_log_section {
+  width: 50%;
+  display: block;
+}
+
+#debug_log {
+  font-family: Courier;
+   font-size: 10px;
+}

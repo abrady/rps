@@ -7,104 +7,78 @@
       var fb_app_id = {{config.app_id}};
     </script>
   </head>
-  <body>
+  <body class="rps">
     <!-- onresize="Init.winresize();" -->
     <!-- onload="Init.init();" -->
     <!-- onorientationchange="Init.winresize();" -->
     <!-- onunload="Init.quit()" -->
     <div id="fb-root"></div>
     <div id="rps_pre_login">
-      <h3>Logging In...</h3>
+      <h3>Logging In ... do you smell what The Rock is cooking?</h3>
     </div>
     <div id="rps_body_root" hidden="true">
-      <div id="cheevo_section">
+      <div id="cheevo_section" class="section">
         <h4>Give Yourself Achievements</h4>
         <button onclick="cheevo_grant('winwithrock3')">Give 'Won With Rock' Achievement</button><br>
         <button onclick="cheevo_grant('winwithpaper3')">Give 'Won With Paper' Achievement</button><br>
         <button onclick="cheevo_grant('winwithscissors4')">Give 'Won With Scissors' Achievement</button><br>
       </div>
-      <div id="action_section">
+      <div id="action_section" class="section">
         <h4>Give Yourself Actions</h4>
         <button onclick="action_grant('rockbreaksscissors', 'scissors3')">Rock Breaks Scissors</button><br>
         <button onclick="action_grant('papercoversrock',    'rock')"   >Paper Covers Rock</button><br>
         <button onclick="action_grant('scissorscutpaper',   'paper3')"  >Scissors Cut Paper</button><br>
       </div>
-      <p.>
-        <div id="scores">
-          <h4>Set Score:</h4>
-          <input type="text" id="score_value" onkeyup="return score_enter_listener(event)"></input>
-        </div>
-        <div id="cheevos">
-          <!-- <h4>Your Achievements:</h4> -->
-        </div>
-    </div>
-    <div id="requests_section">
-      <h4>Send Requests</h4>
-      <button id="send-to-many">Send to Many</button>
-      <button id="custom-filters">Custom Filters</button>
-      <button id="send-to-one">Send to One</button>
-      <button id="send-app-to-user">Send App-to-User</button>
-      <button id="list-pending">List Pending</button>
-      <button id="clear-pending">Clear Pending</button>
-      <button id="clear-prompted">Clear Prompted</button>
+      <div id="scores" class="section">
+        <h4>Set Score:</h4>
+        <input type="text" id="score_value" onkeyup="return score_enter_listener(event)"></input>
+      </div>
+      <div id="cheevos" class="section">
+        <h4>Your Achievements:</h4>
+        <!-- <h4>Your Achievements:</h4> -->
+      </div>
+      <div id="requests_section" class="section">
+        <h4>Send Requests</h4>
+        <textarea id="send-to-many-text" rows="2" cols="40"> Rochambeau you for which one of us gets eaten. </textarea>
+
+        <br />
+        <button id="send-to-many">Send to Many</button>      
+        <button id="list-pending">List Pending</button>
+        <button id="clear-pending">Clear Pending</button>
+        <script>
+          document.getElementById('send-to-many').onclick = function() {
+          var txtarea = document.getElementById('send-to-many-text');
+          FB.ui(
+          {
+          method: 'apprequests',
+          message: txtarea.value,
+          }
+          );
+          }
+        </script>
+        <script>
+          document.getElementById('list-pending').onclick = function() {
+            FB.api('/me/apprequests', requests_pending_show);
+          }
       
-      <script>
-        document.getElementById('send-to-many').onclick = function() {
-        FB.ui({
-        method: 'apprequests',
-        message: 'You should learn more about the @[19292868552:Platform].',
-        }, Log.info.bind('send-to-many callback'));
-        }
-        
-        document.getElementById('custom-filters').onclick = function() {
-        FB.ui({
-        method: 'apprequests',
-        message: 'Have you heard about @[184484190795:Rell]?',
-        data: 'invite-to-rell-42',
-        filters: [{name: 'Naitik', user_ids: [5526183]}, 'app_non_users', {name: 'Games People', user_ids: [703, 6203644]}]
-        }, Log.info.bind('send-to-many callback'));
-        }
-        
-        document.getElementById('send-to-one').onclick = function() {
-        FB.ui({
-        method: 'apprequests',
-        message: 'A request especially for @[5526183:Naitik].',
-        to: '5526183',
-        data: 'send-to-one-42'
-        }, Log.info.bind('send-to-one callback'));
-        }
-        
-        document.getElementById('send-app-to-user').onclick = function() {
-        FB.api(
-        '/me/apprequests',
-        { message: 'From the app to the user.' },
-        'POST',
-        Log.info.bind('sent app-to-user request'));
-        }
-        
-        document.getElementById('list-pending').onclick = function() {
-        FB.api('/me/apprequests', Log.info.bind('pending requests'));
-        }
-        
-        document.getElementById('clear-pending').onclick = function() {
-        FB.api('/me/apprequests', function(response) {
-        var ids = [];
-        for (var i=0, l=response.data.length; i<l; i++) {
-          FB.api('/' + response.data[i].id, 'DELETE', Log.info.bind('clear requests'));
-        }
-        });
-        }
-                                                   
-document.getElementById('clear-prompted').onclick = function() {
-FB.api(
-prompt('Enter the ID of the request to delete:'),
-'DELETE',
-Log.info.bind('delete request'));
-}
-      </script>
+          document.getElementById('clear-pending').onclick = function() {
+            FB.api('/me/apprequests', function(response) {
+              var ids = [];
+              for (var i=0, l=response.data.length; i<l; i++) {
+                FB.api('/' + response.data[i].id, 'DELETE', requests_clear);
+              }
+            });
+          }
+        </script>
+      </div>
+      <div class="section">
+        <h4>Test Mouse</h4>
+        <button id="test_mouse_button" onmouseover="mouseover_test(this)" onmouseout="mouseout_test(this)">Test Mouse</button>
+      </div>
     </div>
-    <div id="debug_log_section">
-      <p/><p/><hr/><console>Debug Log:</console>
+
+    <div id="debug_log_section" class="section">
+      <h4><console>Debug Log:</console></h4>
       <p id="debug_log" style="padding: 10px; border: grey 1px solid">
       </p>
       <script type="text/javascript" src="/client/simple.js"></script>
