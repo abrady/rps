@@ -6,6 +6,7 @@
 // js: escape == urlencode, unescape == urldecode
 
 config = require('./config'); // exporting to global scope
+g_graph_url = 'graph.'+config.fb_domain_modifier+'facebook.com';
 
 var comm = require('./lib/comm');
 var fs = require('fs');
@@ -55,19 +56,19 @@ function fbinfo_from_cookie(cookie) {
 function params_from_url(url)
 {
   var a = url.split('?') // query string is at a[1]
-    if(a.length <= 0)
-      return null;
+  if(a.length <= 1)
+    return null;
   var b = a[1].split('&')
-    return dict_from_keyvals_str(b,'=');
+  return dict_from_keyvals_str(b,'=');
 }
 
 // use this to query data from open graph
 function graph_get(path,end_cb) {
-  log.info('graph_get:' + config.graph_url + path);
+  log.info('graph_get:' + g_graph_url + path);
   data = '';
   https.get(
     {
-      host: config.graph_url,
+      host: g_graph_url,
         path: path
         },
     function(res) {
@@ -94,11 +95,11 @@ function graph_get(path,end_cb) {
 }
 
 function graph_post(path, body, end_cb) {
-  log.info('graph_post:' + config.graph_url + path + ' body: ' + body);
+  log.info('graph_post:' + g_graph_url + path + ' body: ' + body);
   var data = '';
   var graph_req = https.request(
     {
-      host: config.graph_url,
+      host: g_graph_url,
         method: 'POST',
         path: path
         },
@@ -212,12 +213,15 @@ function req_handler(req, res)
   log.debug(str_from_req(req))
     var fb_info = fbinfo_from_cookie(req.headers.cookie);
   log.debug('access_token='+(fb_info ? fb_info.access_token : "none"));
-  var index_fname = '/client/index.shtml';
   var parse = url.parse(req.url);
   var pathname = parse.pathname;
+  var params = params_from_url(req.url);
+
   log.debug('request: '+pathname);
+
+  // if no path specified, default to index.shtml
   if (pathname.length <= 1) {
-    pathname = index_fname;
+    pathname = '/client/index.shtml';
   }
   var split = pathname.split('/')
     var command = split[1];
@@ -232,8 +236,6 @@ function req_handler(req, res)
   else if('cheevo_grant' == command) {
     // TODO: check list of available cheevos
     log.info('cheevo_update');
-
-    var params = params_from_url(req.url);
     var cheevo = params.cheevo;
     var value = params.value || 100;
     var cheevo_url = escape(config.host+'/client/cheevo/' + cheevo + '.shtml');
@@ -249,9 +251,9 @@ function req_handler(req, res)
     );
     return;
   }
-  else if('cheevo_get' == command) {
+  else if('graph_get' == command) {
     graph_get(
-      '/me/games.achieves?access_token='+escape(fb_info.access_token),
+      params.graph_path+'?access_token='+escape(fb_info.access_token),
       function (data) {
         res.end(data);
       }
@@ -261,21 +263,18 @@ function req_handler(req, res)
   else if('action_grant' == command) {
     // TODO: check list of available actions
     log.info('action_grant');
-    var params = params_from_url(req.url);
     og_action_create(res,params.action,params.object,fb_info.access_token);
     return;
   }
   else if('action_get' == command) {
     // TODO: check list of available actions
     log.info('action_get');
-    var params = params_from_url(req.url);
     og_action_get(res,params.action,fb_info.access_token);
     return;
   }
   else if('score_set' == command) {
     // https://graph.facebook.com/me/games.scores?
     log.info('score_set');
-    var params = params_from_url(req.url);
     og_score_set(res,params.score,params.access_token);
     return;
   }
@@ -300,7 +299,7 @@ function req_handler(req, res)
 // Start the servers
 
 log.info("Running app " + config.app_name + " id " + config.app_id);
-log.info("connecting to graph url " + config.graph_url);
+log.info("connecting to graph url " + g_graph_url);
 http.createServer(
   req_handler
 ).listen(config.http_port);

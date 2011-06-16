@@ -2,6 +2,9 @@ Rock Paper Scissors, the game!
 - appid: 224658110883993
 - d37dfe315494b6959a59a8571c7a8f51
 
+* App Requests
+- http://apps.facebook.com/superfbrps/?request_ids=10150325900554428&ref=notif&notif_t=app_request
+
 * Notes
 ** og doesn't re-grab objects. this is a pain.
 

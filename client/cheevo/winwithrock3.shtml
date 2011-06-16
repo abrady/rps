@@ -7,11 +7,11 @@
     <meta property="og:url" content="http://{{config.host}}/client/cheevo/winwithrock3.shtml"/>
     <meta property="og:title" content="Win A Game With Rock"/>
     <meta property="og:description"
-          content="You accomplished the amazing: defeating an opponent by choosing rock."/>
+          content="Rock destroyed a pair of scissors"/>
     <meta property="og:image" content="http://t0.gstatic.com/images?q=tbn:ANd9GcT4QORJxRO5bvS5MeAnmP18MUUynqAI2B_cN75zpsXSQB18jQZw" />
     <meta property="og:points" content="100000" />
   </head>
   <body>
-<h1>This Is For Open Graph Only, not for looking at! go-way!!</h1>
+<h1>Specific information about the achievement goes here, perhaps with a picture etc.</h1>
   </body>
 </html>

@@ -4,7 +4,15 @@
     <link rel="stylesheet" type="text/css" href="/client/style.css" />
     <script src="http://connect.facebook.net/en_US/all.js"></script>
     <script>
-      var fb_app_id = {{config.app_id}};
+      var fb_app_id       = {{config.app_id}};
+      FB._domain.api      = 'https://api.{{config.fb_domain_modifier}}facebook.com/',
+      FB._domain.api_read =  'https://api-read.{{config.fb_domain_modifier}}facebook.com/',
+      FB._domain.cdn      =  (window.location.protocol == 'https:'
+                   ? 'https://s-static.ak.fbcdn.net/'
+                   : 'http://static.ak.fbcdn.net/'),
+      FB._domain.graph    = 'https://graph.{{config.fb_domain_modifier}}facebook.com/',
+      FB._domain.staticfb = 'http://static.ak.facebook.com/',
+      FB._domain.www      = window.location.protocol + '//www.{{config.fb_domain_modifier}}facebook.com/'
     </script>
   </head>
   <body class="rps">
@@ -32,10 +40,6 @@
       <div id="scores" class="section">
         <h4>Set Score:</h4>
         <input type="text" id="score_value" onkeyup="return score_enter_listener(event)"></input>
-      </div>
-      <div id="cheevos" class="section">
-        <h4>Your Achievements:</h4>
-        <!-- <h4>Your Achievements:</h4> -->
       </div>
       <div id="requests_section" class="section">
         <h4>Send Requests</h4>
