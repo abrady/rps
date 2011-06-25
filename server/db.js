@@ -44,7 +44,7 @@ db_obj.open(
   }
 );
 
-exports.request_insert = function(req_id,game_state) {
+exports.request_add = function(req_id,game_state) {
   log.info("inserting req_id:" + req_id);
   if (!rps_reqs_collection) {
     log.err('request_add: collection not loaded yet');
@@ -66,7 +66,7 @@ exports.request_insert = function(req_id,game_state) {
 exports.request_get = function(req_id, callback) {
   log.debug("inserting req_id:" + req_id);
   if (!rps_reqs_collection) {
-    log.err('request_add: collection not loaded yet');
+    log.err('request_get: collection not loaded yet');
     return;
   }
   rps_reqs_collection.findOne(
@@ -85,7 +85,7 @@ exports.request_get = function(req_id, callback) {
 exports.request_remove = function(req_id) {
   log.info("removing req_id:" + req_id);
   if (!rps_reqs_collection) {
-    log.err('request_add: collection not loaded yet');
+    log.err('request_remove: collection not loaded yet');
     return;
   }
   rps_reqs_collection.remove(

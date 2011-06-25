@@ -40,6 +40,9 @@
       <div id="scores" class="section">
         <h4>Set Score:</h4>
         <input type="text" id="score_value" onkeyup="return score_enter_listener(event)"></input>
+        <h4>Erase All Scores:</h4>
+        <button onclick="scores_erase_all()">Erase All Scores</button><br>
+
       </div>
       <div id="requests_section" class="section">
         <h4>Send Requests</h4>
@@ -54,7 +57,8 @@
             {
               method: 'apprequests',
               message: txtarea.value,
-            }
+            },
+            requests_sent_handler
           );
           }
         </script>
@@ -71,15 +75,17 @@
         <!--   } -->
         <!-- </script> -->
       </div>
-      <div class="section">
-        <h4>Test Mouse</h4>
-        <button id="test_mouse_button" onmouseover="mouseover_test(this)" onmouseout="mouseout_test(this)">Test Mouse</button>
+
+      <div class="section" id="requests_section">
+        <h4>Manage Your Requests</h4>
+        <ul style="list-style-type:none" id="pending_requests"/>
       </div>
     </div>
 
     <div id="debug_log_section" class="section">
       <h4><console>Debug Log:</console></h4>
       <p id="debug_log" style="padding: 10px; border: grey 1px solid">
+        {{options.log}}
       </p>
       <script type="text/javascript" src="/client/simple.js"></script>
     </div>
