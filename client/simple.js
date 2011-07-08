@@ -97,28 +97,42 @@ function on_loggged_in() {
   FB.api('/me/apprequests', requests_show_pending); 
 }
 
+function login_respose_validate(perms_string, response){
+  if (!response.session) {
+    return false;
+  }
+  var perms = perms_string.split(',');
+  for(var i = 0; i < perms.length; ++i) {
+    var k = perms[i];
+    if (-1 == response.perms.indexOf(k))
+      return false;
+  }
+  return true;
+}
+
 if (fb_app_id) {
-    FB.getLoginStatus(
-        function(response) {
+  var permissions = 'publish_stream';
+  FB.getLoginStatus(
+    function(response) {
+      if (login_respose_validate(permissions,response)) {
+        on_loggged_in();
+        console.log('logged in');
+      } else {
+        fb_logged_in = false;
+        FB.login(
+          function(response) {
             if (response.session) {
-                on_loggged_in();
-                console.log('logged in');
+              on_loggged_in();
             } else {
-                fb_logged_in = false;
-                FB.login(
-                    function(response) {
-                        if (response.session) {
-                            on_loggged_in();
-                        } else {
-							debug_log('failed to log in');
-                            fb_logged_in = false;
-                        }
-                    },
-                    {perms:''}  // read_stream,publish_stream
-                );
+			  debug_log('failed to log in');
+              fb_logged_in = false;
             }
-        }
-    );
+          },
+          {perms:permissions}  // read_stream,publish_stream
+        );
+      }
+    }
+  );
 }
 
 function cheevo_grant(cheevo) {
@@ -149,13 +163,16 @@ function action_grant(action,obj_name) {
     xmlhttp.send();
 }
 
-function score_enter_listener(e) {
+function score_keyup_listener(e) {
     var keychar = String.fromCharCode(e.keyCode);
     if (keychar != '\r') { // check for newline
         var numcheck = /\d/;
         return numcheck.test(keychar);
     }
+  score_set();
+}
 
+function score_set() {
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange=function()
     {

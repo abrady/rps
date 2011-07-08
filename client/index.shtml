@@ -39,10 +39,13 @@
       </div>
       <div id="scores" class="section">
         <h4>Set Score:</h4>
-        <input type="text" id="score_value" onkeyup="return score_enter_listener(event)"></input>
+        <input type="text" id="score_value" onkeyup="return score_keyup_listener(event)"></input>
+        <br/>
+        <button onclick="score_set()">Set Score</button>
+      </div>
+      <div id="scores2" class="section">
         <h4>Erase All Scores:</h4>
-        <button onclick="scores_erase_all()">Erase All Scores</button><br>
-
+        <button onclick="scores_erase_all()">Erase All Scores</button>
       </div>
       <div id="requests_section" class="section">
         <h4>Send Requests</h4>
