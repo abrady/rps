@@ -57,28 +57,31 @@ function on_loggged_in()
 }
 
 if (fb_app_id) {
-    FB.getLoginStatus(
-        function(response) {
+  debug_log("getting login status");
+  FB.getLoginStatus(
+    function(response) {
+      if (response.session) {
+        on_loggged_in();
+        debug_log('logged in');
+      } else {
+        debug_log("calling FB.login");
+        fb_logged_in = false;
+        FB.login(
+          function(response) {
             if (response.session) {
-                on_loggged_in();
-                console.log('logged in');
+              on_loggged_in();
             } else {
-                fb_logged_in = false;
-                FB.login(
-                    function(response) {
-                        if (response.session) {
-                            on_loggged_in();
-                        } else {
-							debug_log('failed to log in');
-                            fb_logged_in = false;
-                        }
-                    },
-                    {perms:''}  // read_stream,publish_stream
-                );
+              debug_log('failed to log in');
+              fb_logged_in = false;
             }
-        }
-    );
+          },
+          {perms:''}  // read_stream,publish_stream
+        );
+      }
+    }
+  );
 }
+debug_log("done calling function.");
 
 function cheevo_grant(cheevo) {
     xmlhttp = new XMLHttpRequest();
@@ -135,7 +138,7 @@ function score_get_mine() {
   xmlhttp.onreadystatechange=function()
   {
     if (xmlhttp.readyState==4 && xmlhttp.status==200)
-    {          
+    {
       debug_log(xmlhttp.responseText);
     }
   }
@@ -144,7 +147,7 @@ function score_get_mine() {
   xmlhttp.open("GET",'score_get_users?users='+escape(JSON.stringify(users))+'access_token='+escape(FB._session.access_token));
   xmlhttp.send();
   score_elt.value = '';
-  return false;  
+  return false;
 }
 
 function mouseover_test(n) {
