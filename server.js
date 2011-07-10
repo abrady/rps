@@ -6,21 +6,18 @@
 // js: escape == urlencode, unescape == urldecode
 
 config = require('./config'); // exporting to global scope
+g_graph_url = 'graph.'+config.fb_domain_modifier+'facebook.com';
 
-var comm = require('./lib/comm');
-var fs = require('fs');
-var http = require('http');
+var comm  = require('./lib/comm');
+//var db    = require('./server/db'); TODO(abrady)
+var fs    = require('fs');
+var http  = require('http');
 var https = require('https');
-var sys = require("sys");
-var url = require("url");
-
-var util = require('./util');
-var log = require('./util/log');
+var log   = require('./util/log');
+var sys   = require("sys");
+var url   = require("url");
+var util  = require('./util');
 log.level = log.INFO;
-
-// process.on('uncaughtException', function(err) {
-//   console.log(err);
-// });
 
 function str_from_req(req)
 {
@@ -30,7 +27,7 @@ function str_from_req(req)
 
 
 function dict_from_keyvals_str(str, delim) {
-  var res = [];
+  var res = {};
   for(var i = 0; i < str.length; ++i) {
     var tmp = str[i].split(delim);
     res[tmp[0]] = unescape(tmp[1]);
@@ -55,19 +52,19 @@ function fbinfo_from_cookie(cookie) {
 function params_from_url(url)
 {
   var a = url.split('?') // query string is at a[1]
-    if(a.length <= 0)
-      return null;
+  if(a.length <= 1)
+    return null;
   var b = a[1].split('&')
-    return dict_from_keyvals_str(b,'=');
+  return dict_from_keyvals_str(b,'=');
 }
 
 // use this to query data from open graph
 function graph_get(path,end_cb) {
-  log.info('graph_get:' + config.graph_url + path);
+  log.info('graph_get:' + g_graph_url + path);
   data = '';
   https.get(
     {
-      host: config.graph_url,
+      host: g_graph_url,
         path: path
         },
     function(res) {
@@ -94,11 +91,11 @@ function graph_get(path,end_cb) {
 }
 
 function graph_post(path, body, end_cb) {
-  log.info('graph_post:' + config.graph_url + path + ' body: ' + body);
+  log.info('graph_post:' + g_graph_url + path + ' body: ' + body);
   var data = '';
   var graph_req = https.request(
     {
-      host: config.graph_url,
+      host: g_graph_url,
         method: 'POST',
         path: path
         },
@@ -126,6 +123,41 @@ function graph_post(path, body, end_cb) {
       }
     );
   graph_req.end(body);
+}
+
+function graph_delete(path,end_cb) {
+  log.info('graph_delete:' + g_graph_url + path);
+  var data = '';
+  var graph_req = https.request(
+    {
+      host: g_graph_url,
+        method: 'DELETE',
+        path: path
+        },
+    function(res) {
+      res.on(
+        'data',
+        function(d) {
+          log.info('graph data:'+d);
+          data += d;
+        }
+      );
+      res.on(
+        'end',
+        function ()
+        {
+          end_cb(data);
+        }
+      );
+    }
+  )
+  graph_req.on(
+    'error',
+    function(e) {
+      console.error(e);
+    }
+  );
+  graph_req.end();
 }
 
 
@@ -177,12 +209,48 @@ function og_score_set(res, score, access_token)
   );
 }
 
+function og_app_access_token(rec_cb) {
+  // https://graph.facebook.com/oauth/access_token? client_id=YOUR_APP_ID&client_secret=YOUR_APP_SECRET& grant_type=client_credentials
+  graph_get(
+    'oauth/access_token?client_id='+config.app_id+'&client_secret='+config.app_secret+'&grant_type=client_credentials',
+    function(d) {
+      log.info('app access token:'+d);
+      var s = d.split('=');
+      if (s.length == 2) {
+        var access_token = s[1];
+        log.info('og_app_access_token: ' + access_token);
+        rec_cb(access_token);
+      } else {
+        log.err('og_app_access_token, unparsable data: '+d );
+      }
+    }
+  )
+}
+
+function og_scores_erase_all(res, access_token)
+{
+  og_app_access_token(
+    function (access_token) {
+      var url = '/'+config.app_id+'/games.scores?'
+        + 'access_token='+escape(access_token)
+        + '&client_secret='+config.app_secret;
+      graph_delete(
+        url,
+        function(d) {
+          log.info('og_score_erase_all:'+d);
+          res.end ('og_score_erase_all:'+d);
+        }
+      );
+    }
+  );
+}
+
 function og_score_get_users(res, users, access_token)
 {
   // https://graph.facebook.com/me/games.scores?
   var users_body = {};
   var body;
-  
+
   for(var i = 0; i < users.length; ++i) {
     users_body.id = users[i];
   }
@@ -196,8 +264,8 @@ function og_score_get_users(res, users, access_token)
     '/me/games.scores?',
     body,
     function(d) {
-      log.info('og_score_set:'+score+':'+d);
-      res.end ('og_score_set:'+score+':'+d);
+      log.info('og_score_get_users:'+score+':'+d);
+      res.end ('og_score_get_users:'+score+':'+d);
     }
   );
 }
@@ -212,12 +280,15 @@ function req_handler(req, res)
   log.debug(str_from_req(req))
     var fb_info = fbinfo_from_cookie(req.headers.cookie);
   log.debug('access_token='+(fb_info ? fb_info.access_token : "none"));
-  var index_fname = '/client/index.shtml';
   var parse = url.parse(req.url);
   var pathname = parse.pathname;
+  var params = params_from_url(req.url);
+
   log.debug('request: '+pathname);
+
+  // if no path specified, default to index.shtml
   if (pathname.length <= 1) {
-    pathname = index_fname;
+    pathname = '/client/index.shtml';
   }
   var split = pathname.split('/')
     var command = split[1];
@@ -226,17 +297,37 @@ function req_handler(req, res)
   // all servable files live in the client/ or engine/ directories
   if(-1 < ['client','engine'].indexOf(command)){
     log.info('sending ' + pathname);
-    comm.sendFile(req, res, pathname);
+    var options = {
+      log : ''
+    };
+    if(params) {
+      options.log += 'url params: ' + JSON.stringify(params) + '\n';
+
+      // check for request link
+      // http://apps.facebook.com/superfbrps/?request_ids=10150335656109428&ref=notif&notif_t=app_request
+      if(false && params.request_ids) {
+        for(var i = 0; i < params.request_ids.length; ++i) {
+          // get the associated request object.
+          graph_get(
+            res.request_ids[i],
+            function(data) {
+              var obj = JSON.parse(data);
+
+            }
+          );
+        }
+        return;
+      }
+    }
+    comm.sendFile(req, res, pathname, options);
     return;
   }
   else if('cheevo_grant' == command) {
     // TODO: check list of available cheevos
     log.info('cheevo_update');
-
-    var params = params_from_url(req.url);
     var cheevo = params.cheevo;
     var value = params.value || 100;
-    var cheevo_url = escape(config.host+'/client/cheevo/' + cheevo + '.shtml');
+    var cheevo_url = escape(config.host+':'+config.http_port+'/client/cheevo/' + cheevo + '.shtml');
     var path = '/me/games.achieves?';
     var body = 'achievement='+cheevo_url+'&access_token='+escape(fb_info.access_token)+'&client_secret='+config.app_secret;
     var graph_req = graph_post(
@@ -249,9 +340,9 @@ function req_handler(req, res)
     );
     return;
   }
-  else if('cheevo_get' == command) {
+  else if('graph_get' == command) {
     graph_get(
-      '/me/games.achieves?access_token='+escape(fb_info.access_token),
+      params.graph_path+'?access_token='+escape(fb_info.access_token),
       function (data) {
         res.end(data);
       }
@@ -261,22 +352,24 @@ function req_handler(req, res)
   else if('action_grant' == command) {
     // TODO: check list of available actions
     log.info('action_grant');
-    var params = params_from_url(req.url);
     og_action_create(res,params.action,params.object,fb_info.access_token);
     return;
   }
   else if('action_get' == command) {
     // TODO: check list of available actions
     log.info('action_get');
-    var params = params_from_url(req.url);
     og_action_get(res,params.action,fb_info.access_token);
     return;
   }
   else if('score_set' == command) {
     // https://graph.facebook.com/me/games.scores?
     log.info('score_set');
-    var params = params_from_url(req.url);
     og_score_set(res,params.score,params.access_token);
+    return;
+  }
+  else if('scores_erase_all' == command) {
+    log.info(command);
+    og_scores_erase_all(res,params.access_token);
     return;
   }
   else if('score_get_users' == command) {
@@ -287,7 +380,15 @@ function req_handler(req, res)
     res.end('');
     return;
   }
-  else if('/favicon.ico' == pathname) {
+  else if('request_add_ids') {
+    log.debug('request_add_ids ' + params.res);
+    if (params.res) {
+      res = JSON.parse(unescape(params.res));
+      for(var i = 0; i < res.request_ids.length; ++i) {
+        db.request_add(res.request_ids[i],null);
+      }
+    }
+  } else if('/favicon.ico' == pathname) {
     res.end();
     return;
   }
@@ -300,7 +401,7 @@ function req_handler(req, res)
 // Start the servers
 
 log.info("Running app " + config.app_name + " id " + config.app_id);
-log.info("connecting to graph url " + config.graph_url);
+log.info("connecting to graph url " + g_graph_url);
 http.createServer(
   req_handler
 ).listen(config.http_port);
