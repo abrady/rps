@@ -17,7 +17,7 @@ var log   = require('./util/log');
 var sys   = require("sys");
 var url   = require("url");
 var util  = require('./util');
-log.level = log.INFO;
+log.level = log.DEBUG;//INFO;
 
 function str_from_req(req)
 {
@@ -283,15 +283,15 @@ function req_handler(req, res)
   var parse = url.parse(req.url);
   var pathname = parse.pathname;
   var params = params_from_url(req.url);
-
   log.debug('request: '+pathname);
+
 
   // if no path specified, default to index.shtml
   if (pathname.length <= 1) {
     pathname = '/client/index.shtml';
   }
-  var split = pathname.split('/')
-    var command = split[1];
+  var split = pathname.split('/');
+  var command = split[1];
   log.debug('pathname is '+pathname+' root is ' + command);
 
   // all servable files live in the client/ or engine/ directories
@@ -327,7 +327,7 @@ function req_handler(req, res)
     log.info('cheevo_update');
     var cheevo = params.cheevo;
     var value = params.value || 100;
-    var cheevo_url = escape(config.host+':'+config.http_port+'/client/cheevo/' + cheevo + '.shtml');
+    var cheevo_url = escape('abrady.xen.prgmr.com/client/cheevo/' + cheevo + '.shtml');
     var path = '/me/games.achieves?';
     var body = 'achievement='+cheevo_url+'&access_token='+escape(fb_info.access_token)+'&client_secret='+config.app_secret;
     var graph_req = graph_post(

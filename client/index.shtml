@@ -27,7 +27,7 @@
     <div id="rps_body_root" hidden="true">
       <div id="cheevo_section" class="section">
         <h4>Give Yourself Achievements</h4>
-        <button onclick="cheevo_grant('winwithrock5')">Give 'Won With Rock' Achievement</button><br>
+        <button onclick="cheevo_grant('winwithrock3')">Give 'Won With Rock' Achievement</button><br>
         <button onclick="cheevo_grant('winwithpaper3')">Give 'Won With Paper' Achievement</button><br>
         <button onclick="cheevo_grant('winwithscissors4')">Give 'Won With Scissors' Achievement</button><br>
         <button onclick="cheevo_grant('winthree')">Give 'Won Three Games' Achievement</button><br>
