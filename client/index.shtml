@@ -31,14 +31,15 @@
         <button onclick="cheevo_grant('winwithpaper3')">Give 'Won With Paper' Achievement</button><br>
         <button onclick="cheevo_grant('winwithscissors4')">Give 'Won With Scissors' Achievement</button><br>
       </div>
-      <div id="action_section" class="section">
-        <h4>Give Yourself Actions</h4>
-        <button onclick="action_grant('rockbreaksscissors', 'scissors3')">Rock Breaks Scissors</button><br>
-        <button onclick="action_grant('papercoversrock',    'rock')"   >Paper Covers Rock</button><br>
-        <button onclick="action_grant('scissorscutpaper',   'paper3')"  >Scissors Cut Paper</button><br>
-      </div>
+      <!-- <div id="action_section" class="section"> -->
+      <!--   <h4>Give Yourself Actions</h4> -->
+      <!--   <button onclick="action_grant('rockbreaksscissors', 'scissors3')">Rock Breaks Scissors</button><br> -->
+      <!--   <button onclick="action_grant('papercoversrock',    'rock')"   >Paper Covers Rock</button><br> -->
+      <!--   <button onclick="action_grant('scissorscutpaper',   'paper3')"  >Scissors Cut Paper</button><br> -->
+      <!-- </div> -->
       <div id="scores" class="section">
         <h4>Set Score:</h4>
+        <div id="yourScore"></div>
         <input type="text" id="score_value" onkeyup="return score_keyup_listener(event)"></input>
         <br/>
         <button onclick="score_set()">Set Score</button>
