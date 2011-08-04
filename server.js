@@ -60,6 +60,9 @@ function params_from_url(url)
 
 // use this to query data from open graph
 function graph_get(path,end_cb) {
+  if (path[0] != '/') {
+    path = '/' + path;
+  }
   log.info('graph_get:' + g_graph_url + path);
   data = '';
   https.get(
@@ -212,7 +215,7 @@ function og_score_set(res, score, access_token)
 function og_app_access_token(rec_cb) {
   // https://graph.facebook.com/oauth/access_token? client_id=YOUR_APP_ID&client_secret=YOUR_APP_SECRET& grant_type=client_credentials
   graph_get(
-    'oauth/access_token?client_id='+config.app_id+'&client_secret='+config.app_secret+'&grant_type=client_credentials',
+    '/oauth/access_token?client_id='+config.app_id+'&client_secret='+config.app_secret+'&grant_type=client_credentials',
     function(d) {
       log.info('app access token:'+d);
       var s = d.split('=');
@@ -268,11 +271,6 @@ function og_score_get_users(res, users, access_token)
       res.end ('og_score_get_users:'+score+':'+d);
     }
   );
-}
-
-function og_score_delete_all(access_token)
-{
-  // https://graph.facebook.com/[config.app_id]/games.scores?
 }
 
 function req_handler(req, res)

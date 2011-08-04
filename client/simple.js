@@ -111,7 +111,7 @@ function login_respose_validate(perms_string, response){
 }
 
 if (fb_app_id) {
-  var permissions = 'publish_stream';
+  var permissions = 'publish_stream,publish_actions';
   FB.getLoginStatus(
     function(response) {
       if (login_respose_validate(permissions,response)) {
@@ -217,7 +217,19 @@ function scores_erase_all() {
 //   n.innerHTML = "Zzap";
 // }
 
-function make_request_delete_function(id) {
+function ogobj_del(fbid, section) {
+  debug_log("removing " + fbid + " from section " + section);
+  FB.api('/' + fbid, 'DELETE', request_cleared);
+  var d = document.getElementById(fbid);
+  d.parentNode.removeChild(d);
+}
+function ogobj_del_funcgen(fbid,section) {
+  return function () {
+    ogobj_del(fbid,section);
+  }
+}
+
+function cheevo_delete(id) {
   return function () {
     debug_log("removing request " + id);
     var o = document.getElementById('pending_requests');
@@ -237,7 +249,7 @@ function requests_show_pending(obj) {
     var txt = document.createElement('div');
     btn_del.innerHTML = "X";
     btn_del.style.setProperty('float','left');
-    btn_del.onclick = make_request_delete_function(o.id);
+    btn_del.onclick = ogobj_del_funcgen(o.id, "requests");
     e.appendChild(btn_del);
 
     txt.style.setProperty('font-size', '11px');
