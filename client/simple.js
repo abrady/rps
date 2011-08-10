@@ -8,12 +8,6 @@ function debug_log(str) {
         console.log(str);
 }
 
-FB.init({
-            appId  : fb_app_id,
-            status : true, // check login status
-            cookie : true, // enable cookies to allow the server to access the session
-        });
-
 function on_cheevos_recv(data) {
   var root = document.getElementById('cheevos');
   var l = document.createElement('ul');
@@ -117,32 +111,6 @@ function login_respose_validate(perms_string, response){
   }
   return true;
 }
-
-if (fb_app_id) {
-  var permissions = 'publish_stream,publish_actions';
-  FB.getLoginStatus(
-    function(response) {
-      if (login_respose_validate(permissions,response)) {
-        on_loggged_in();
-        console.log('logged in');
-      } else {
-        fb_logged_in = false;
-        FB.login(
-          function(response) {
-            if (response.session) {
-              on_loggged_in();
-            } else {
-			  debug_log('failed to log in');
-              fb_logged_in = false;
-            }
-          },
-          {perms:permissions}
-        );
-      }
-    }
-  );
-}
-debug_log("done calling function.");
 
 function cheevo_grant(cheevo) {
     xmlhttp = new XMLHttpRequest();
@@ -293,3 +261,38 @@ function requests_sent_handler(res) {
   server_send_cmd('request_add_ids', req_ids, null);
 }
 
+// ============================================================
+// Login
+// ============================================================
+
+FB.init({
+            appId  : fb_app_id,
+            status : true, // check login status
+            cookie : true, // enable cookies to allow the server to access the session
+        });
+
+
+if (fb_app_id) {
+  var permissions = 'publish_stream,publish_actions';
+  FB.getLoginStatus(
+    function(response) {
+      if (login_respose_validate(permissions,response)) {
+        on_loggged_in();
+        console.log('logged in');
+      } else {
+        fb_logged_in = false;
+        FB.login(
+          function(response) {
+            if (response.session) {
+              on_loggged_in();
+            } else {
+			  debug_log('failed to log in');
+              fb_logged_in = false;
+            }
+          },
+          {perms:permissions}
+        );
+      }
+    }
+  );
+}
