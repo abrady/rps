@@ -64,6 +64,19 @@ function graph_get(graph_path, recv_cb) {
   xmlhttp.send();  
 }
 
+function graph_delete(graph_path, recv_cb) {
+  xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange=function()
+  {
+    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+      recv_cb(xmlhttp.responseText);
+    }
+  }
+  xmlhttp.open("GET",'graph_delete?graph_path='+graph_path,true);
+  xmlhttp.send();  
+}
+
 // generic command sender, response is logged
 // res is of form([true,false],response text)
 function server_send_cmd(cmd,args, res) {
@@ -152,6 +165,13 @@ function cheevo_grant(cheevo) {
     xmlhttp.send();
 }
 
+function cheevo_delete(cheevo) {
+  var rm = 'http://'+window.location.hostname+'/client/cheevo/' + cheevo + '.shtml';
+  debug_log("removing cheevo " + rm);
+  FB.api('/me/achievements','delete',{achievement:rm,client_secret:app_secret},request_cleared);
+}
+
+
 function action_grant(action,obj_name) {
     xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange=function()
@@ -224,21 +244,12 @@ function ogobj_del(fbid, section) {
   debug_log("removing " + fbid + " from section " + section);
   FB.api('/' + fbid, 'DELETE', request_cleared);
   var d = document.getElementById(fbid);
-  d.parentNode.removeChild(d);
+  if (d)
+    d.parentNode.removeChild(d);
 }
 function ogobj_del_funcgen(fbid,section) {
   return function () {
     ogobj_del(fbid,section);
-  }
-}
-
-function cheevo_delete(id) {
-  return function () {
-    debug_log("removing request " + id);
-    var o = document.getElementById('pending_requests');
-    var d = document.getElementById(id);
-    o.removeChild(d);
-    FB.api('/' + id, 'DELETE', request_cleared);
   }
 }
 
@@ -267,7 +278,7 @@ function requests_show_pending(obj) {
 }
 
 function request_cleared(res) {
-  debug_log("cleared request " + res);
+  debug_log("cleared request " + JSON.stringify(res));
 }
 
 function requests_clear_handler(res) {

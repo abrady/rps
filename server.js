@@ -163,7 +163,6 @@ function graph_delete(path,end_cb) {
   graph_req.end();
 }
 
-
 function og_action_get(res, action_name, access_token)
 {
   //    curl 'https://graph.dev.facebook.com/me/superfbrps:paper_covers_rock?access_token=224658110883993%7C2.AQBXJXLB4afinN9o.3600.1305936000.0-827884427%7CE9Fg6j9zpTSlhiSwyYb1_aqc454'
@@ -340,6 +339,15 @@ function req_handler(req, res)
   }
   else if('graph_get' == command) {
     graph_get(
+      params.graph_path+'?access_token='+escape(fb_info.access_token),
+      function (data) {
+        res.end(data);
+      }
+    );
+    return;
+  }
+  else if('graph_delete' == command) {
+    graph_delete(
       params.graph_path+'?access_token='+escape(fb_info.access_token),
       function (data) {
         res.end(data);

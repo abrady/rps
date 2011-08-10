@@ -4,6 +4,7 @@
     <link rel="stylesheet" type="text/css" href="/client/style.css" />
     <script src="http://connect.facebook.net/en_US/all.js"></script>
     <script>
+      var app_secret      = "{{config.app_secret}}";
       var fb_app_id       = {{config.app_id}};
       FB._domain.api      = 'https://api.{{config.fb_domain_modifier}}facebook.com/',
       FB._domain.api_read =  'https://api-read.{{config.fb_domain_modifier}}facebook.com/',
@@ -30,6 +31,11 @@
         <button onclick="cheevo_grant('winwithrock3')">Give 'Won With Rock' Achievement</button><br>
         <button onclick="cheevo_grant('winwithpaper3')">Give 'Won With Paper' Achievement</button><br>
         <button onclick="cheevo_grant('winwithscissors4')">Give 'Won With Scissors' Achievement</button><br>
+        <p/>
+        <h4>Delete Achievements</h4>
+        <button onclick="cheevo_delete('winwithrock3')">Delete 'Won With Rock' Achievement</button><br>
+        <button onclick="cheevo_delete('winwithpaper3')">Delete 'Won With Paper' Achievement</button><br>
+        <button onclick="cheevo_delete('winwithscissors4')">Delete 'Won With Scissors' Achievement</button><br>
       </div>
       <!-- <div id="action_section" class="section"> -->
       <!--   <h4>Give Yourself Actions</h4> -->
