@@ -44,6 +44,9 @@ function on_scores_recv(data) {
   var root = document.getElementById('cheevos');
   var l = document.createElement('ul');
 
+  // doesn't work right now
+  return;
+
   debug_log(data);
   friend_scores = JSON.parse(data);
 }
@@ -92,7 +95,7 @@ function on_loggged_in() {
   rps.hidden = false;
 
   graph_get('/me/games.achieves', on_cheevos_recv);
-//  graph_get('/me/games.scores',on_scores_recv);
+  graph_get('/me/games.scores', on_scores_recv);
 
   FB.api('/me/apprequests', requests_show_pending);
 }
@@ -133,7 +136,7 @@ if (fb_app_id) {
               fb_logged_in = false;
             }
           },
-          {perms:permissions}  // read_stream,publish_stream
+          {perms:permissions}
         );
       }
     }
