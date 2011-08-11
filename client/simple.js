@@ -8,12 +8,6 @@ function debug_log(str) {
         console.log(str);
 }
 
-FB.init({
-            appId  : fb_app_id,
-            status : true, // check login status
-            cookie : true, // enable cookies to allow the server to access the session
-        });
-
 function on_cheevos_recv(data) {
   var root = document.getElementById('cheevos');
   var l = document.createElement('ul');
@@ -29,7 +23,7 @@ function on_cheevos_recv(data) {
   window.cheevos = [];
   for (var i = 0; i < all_cheevos.data.length; i++) {
     var c = all_cheevos.data[i].achievement;
-    var li = document.createElement('li');    
+    var li = document.createElement('li');
     l.appendChild(li);
     if (i > 5) {
       li.innerHTML = '...';
@@ -40,15 +34,26 @@ function on_cheevos_recv(data) {
   root.appendChild(l);
 }
 
-function on_scores_recv(data) {
+// gets all the scores this app has access to
+function my_scores_get() {
+  graph_get('/me/games.scores', my_scores_recv);
+}
+
+function my_scores_recv(data) {
   var root = document.getElementById('cheevos');
   var l = document.createElement('ul');
-
-  // doesn't work right now
-  return;
-  
   debug_log(data);
-  friend_scores = JSON.parse(data);
+  my_scores = JSON.parse(data);
+  d = document.getElementById('myScore');
+  var score = 0;
+  for (var i = 0; i < my_scores.data.length; ++i) {
+    var s = my_scores.data[i];
+    if (s.application.id == fb_app_id) {
+      score = s.score;
+      break;
+    }
+  }
+  d.innerHTML = score;
 }
 
 function graph_get(graph_path, recv_cb) {
@@ -61,7 +66,7 @@ function graph_get(graph_path, recv_cb) {
     }
   }
   xmlhttp.open("GET",'graph_get?graph_path='+graph_path,true);
-  xmlhttp.send();  
+  xmlhttp.send();
 }
 
 function graph_delete(graph_path, recv_cb) {
@@ -74,7 +79,7 @@ function graph_delete(graph_path, recv_cb) {
     }
   }
   xmlhttp.open("GET",'graph_delete?graph_path='+graph_path,true);
-  xmlhttp.send();  
+  xmlhttp.send();
 }
 
 // generic command sender, response is logged
@@ -92,63 +97,9 @@ function server_send_cmd(cmd,args, res) {
       }
     }
   }
-  
+
   xmlhttp.open("GET",'request_add_ids?res='+escape(cheevo),true);
   xmlhttp.send();
-}
-
-function on_loggged_in() {
-  fb_logged_in = true;
-  debug_log('access_token: ' + FB._session.access_token);
-
-  var rps = document.getElementById('rps_pre_login');
-  rps.hidden = true;
-
-  rps = document.getElementById('rps_body_root');
-  rps.hidden = false;
-
-  graph_get('/me/games.achieves', on_cheevos_recv);
-  graph_get('/me/games.scores', on_scores_recv);
- 
-  FB.api('/me/apprequests', requests_show_pending); 
-}
-
-function login_respose_validate(perms_string, response){
-  if (!response.session) {
-    return false;
-  }
-  var perms = perms_string.split(',');
-  for(var i = 0; i < perms.length; ++i) {
-    var k = perms[i];
-    if (-1 == response.perms.indexOf(k))
-      return false;
-  }
-  return true;
-}
-
-if (fb_app_id) {
-  var permissions = 'publish_stream,publish_actions';
-  FB.getLoginStatus(
-    function(response) {
-      if (login_respose_validate(permissions,response)) {
-        on_loggged_in();
-        console.log('logged in');
-      } else {
-        fb_logged_in = false;
-        FB.login(
-          function(response) {
-            if (response.session) {
-              on_loggged_in();
-            } else {
-			  debug_log('failed to log in');
-              fb_logged_in = false;
-            }
-          },
-          {perms:permissions} 
-        );
-      }
-    }
-  );
 }
 
 function cheevo_grant(cheevo) {
@@ -202,10 +153,12 @@ function score_set() {
         if (xmlhttp.readyState==4 && xmlhttp.status==200)
         {
             debug_log(xmlhttp.responseText);
+            my_scores_get();
         }
     }
-    var score_elt = document.getElementById('score_value');
-    xmlhttp.open("GET",'score_set?score='+escape(score_elt.value)+'&access_token='+escape(FB._session.access_token));
+    var score = document.getElementById('score_value').value;
+    document.getElementById('myScore').innerHTML = score;
+    xmlhttp.open("GET",'score_set?score='+escape(score)+'&access_token='+escape(FB._session.access_token));
     xmlhttp.send();
     score_elt.value = '';
     return false;
@@ -222,6 +175,31 @@ function scores_erase_all() {
     }
     var score_elt = document.getElementById('score_value');
     xmlhttp.open("GET",'scores_erase_all?access_token='+escape(FB._session.access_token));
+    xmlhttp.send();
+    score_elt.value = '';
+    return false;
+}
+
+function scores_get_all() {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            debug_log("scores_get_all: "+xmlhttp.responseText);
+            var scores = JSON.parse(xmlhttp.responseText);
+            var ol = document.getElementById('score_leaderboard');
+            ol.innerHTML = "<ol></ol>";
+            for(var i = 0; i < scores.data.length; ++i) {
+              var score = scores.data[i];
+              var l = document.createElement('li');
+              l.innerHTML = score.user.name + ": " + score.score;
+              ol.appendChild(l);
+            }
+        }
+    }
+    var score_elt = document.getElementById('score_value');
+    xmlhttp.open("GET",'scores_get_all?access_token='+escape(FB._session.access_token));
     xmlhttp.send();
     score_elt.value = '';
     return false;
@@ -289,11 +267,82 @@ function requests_clear_handler(res) {
   }
 }
 
-// called when the FB graph gets back. 
+// called when the FB graph gets back.
 // Looks like:
 // {"request_ids":["220693671295002", ...]}"
 function requests_sent_handler(res) {
   var req_ids = JSON.stringify(res);
   debug_log("request send response: " + req_ids);
   server_send_cmd('request_add_ids', req_ids, null);
+}
+
+// ============================================================
+// Login
+// ============================================================
+function permissions_validate(perms_string, response) {
+  var missing = '';
+  if (!response.session) {
+    return false;
+  }
+  var perms = perms_string.split(',');
+  for(var i = 0; i < perms.length; ++i) {
+    var k = perms[i];
+    if (-1 == response.perms.indexOf(k))
+      missing += (missing?', ':'')+k;
+  }
+  if(missing) {
+    console.log('missing permissions: ' + missing);
+    return false;
+  }
+  return true;
+}
+
+function on_loggged_in() {
+  fb_logged_in = true;
+  debug_log('access_token: ' + FB._session.access_token);
+
+  var rps = document.getElementById('rps_pre_login');
+  rps.hidden = true;
+
+  rps = document.getElementById('rps_body_root');
+  rps.hidden = false;
+
+//  graph_get('/me/games.achieves', on_cheevos_recv);
+  my_scores_get();
+  scores_get_all();
+//  FB.api('/me/apprequests', requests_show_pending);
+}
+
+// init FB api
+FB.init({
+    appId  : fb_app_id,
+      status : true, // check login status
+      cookie : true, // enable cookies to allow the server to access the session
+});
+
+// log the user in/ask permissions
+// note: on_logged_in() takes further actions
+if (fb_app_id) {
+  var permissions = 'publish_stream,publish_actions';
+  FB.getLoginStatus(
+    function(response) {
+      if (permissions_validate(permissions,response)) {
+        on_loggged_in();
+        console.log('logged in');
+      } else {
+        fb_logged_in = false;
+        FB.login(
+          function(response) {
+            if (response.session) {
+              on_loggged_in();
+            } else {
+			  debug_log('failed to log in');
+              fb_logged_in = false;
+            }
+          },
+          {perms:permissions}
+        );
+      }
+    }
+  );
 }

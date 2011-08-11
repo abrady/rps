@@ -1,8 +1,7 @@
-exports.host       = "abrady.xen.prgmr.com";
-exports.app_name   = "Rock-Paper-Scissors";
-exports.app_id     ='224658110883993';
-exports.app_secret = 'd37dfe315494b6959a59a8571c7a8f51';
-exports.graph_url  = 'graph.facebook.com';
-exports.http_port = 80;
-exports.https_port = 443;
-exports.fb_domain_modifier = ''; // set this to dev sandbox, e.g. foo.dev1234. (don't forget trailing '.')
+exports.host       = "www.abrady.dev2179.snc6.facebook.com";
+exports.app_name   = "Rock-Paper-Scissors-Dev";
+exports.app_id     = '224255097586328';
+exports.app_secret = '6dc1ff7ad4f0f4dcbeb0f21b1c8bbb57';
+exports.http_port  = 80; //8081;
+exports.https_port = 8082;
+exports.fb_domain_modifier = 'abrady.dev2899.'; // set this to dev sandbox, e.g. foo.dev1234. (don't forget trailing '.')

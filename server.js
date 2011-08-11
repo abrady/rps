@@ -9,7 +9,7 @@ config = require('./config'); // exporting to global scope
 g_graph_url = 'graph.'+config.fb_domain_modifier+'facebook.com';
 
 var comm  = require('./lib/comm');
-var db    = require('./server/db');
+//var db    = require('./server/db'); TODO(abrady)
 var fs    = require('fs');
 var http  = require('http');
 var https = require('https');
@@ -17,7 +17,7 @@ var log   = require('./util/log');
 var sys   = require("sys");
 var url   = require("url");
 var util  = require('./util');
-log.level = log.INFO;
+log.level = log.INFO; // DEBUG
 
 function str_from_req(req)
 {
@@ -64,7 +64,7 @@ function graph_get(path,end_cb) {
     path = '/' + path;
   }
   log.info('graph_get:' + g_graph_url + path);
-  data = '';
+  var data = '';
   https.get(
     {
       host: g_graph_url,
@@ -218,8 +218,8 @@ function og_app_access_token(rec_cb) {
     function(d) {
       log.info('app access token:'+d);
       var s = d.split('=');
-      if (s.length == 2) {        
-        var access_token = s[1]; 
+      if (s.length == 2) {
+        var access_token = s[1];
         log.info('og_app_access_token: ' + access_token);
         rec_cb(access_token);
       } else {
@@ -232,12 +232,12 @@ function og_app_access_token(rec_cb) {
 function og_scores_erase_all(res, access_token)
 {
   og_app_access_token(
-    function (access_token) {     
+    function (access_token) {
       var url = '/'+config.app_id+'/games.scores?'
         + 'access_token='+escape(access_token)
-        + '&client_secret='+config.app_secret; 
+        + '&client_secret='+config.app_secret;
       graph_delete(
-        url, 
+        url,
         function(d) {
           log.info('og_score_erase_all:'+d);
           res.end ('og_score_erase_all:'+d);
@@ -247,12 +247,26 @@ function og_scores_erase_all(res, access_token)
   );
 }
 
+function og_scores_get_all(res, access_token)
+{
+  var url = '/'+config.app_id+'/games.scores?'
+    + 'access_token='+escape(access_token)
+    + '&client_secret='+config.app_secret;
+  graph_get(
+    url,
+    function(d) {
+      log.info('og_score_get_all:'+d);
+      res.end (d);
+    }
+  );
+}
+
 function og_score_get_users(res, users, access_token)
 {
   // https://graph.facebook.com/me/games.scores?
   var users_body = {};
   var body;
-  
+
   for(var i = 0; i < users.length; ++i) {
     users_body.id = users[i];
   }
@@ -280,15 +294,15 @@ function req_handler(req, res)
   var parse = url.parse(req.url);
   var pathname = parse.pathname;
   var params = params_from_url(req.url);
-
   log.debug('request: '+pathname);
+
 
   // if no path specified, default to index.shtml
   if (pathname.length <= 1) {
     pathname = '/client/index.shtml';
   }
-  var split = pathname.split('/')
-    var command = split[1];
+  var split = pathname.split('/');
+  var command = split[1];
   log.debug('pathname is '+pathname+' root is ' + command);
 
   // all servable files live in the client/ or engine/ directories
@@ -299,7 +313,7 @@ function req_handler(req, res)
     };
     if(params) {
       options.log += 'url params: ' + JSON.stringify(params) + '\n';
-    
+
       // check for request link
       // http://apps.facebook.com/superfbrps/?request_ids=10150335656109428&ref=notif&notif_t=app_request
       if(false && params.request_ids) {
@@ -309,8 +323,8 @@ function req_handler(req, res)
             res.request_ids[i],
             function(data) {
               var obj = JSON.parse(data);
-              
-            }          
+
+            }
           );
         }
         return;
@@ -324,7 +338,7 @@ function req_handler(req, res)
     log.info('cheevo_update');
     var cheevo = params.cheevo;
     var value = params.value || 100;
-    var cheevo_url = escape(config.host+'/client/cheevo/' + cheevo + '.shtml');
+    var cheevo_url = escape('abrady.xen.prgmr.com/client/cheevo/' + cheevo + '.shtml');
     var path = '/me/games.achieves?';
     var body = 'achievement='+cheevo_url+'&access_token='+escape(fb_info.access_token)+'&client_secret='+config.app_secret;
     var graph_req = graph_post(
@@ -378,6 +392,11 @@ function req_handler(req, res)
     og_scores_erase_all(res,params.access_token);
     return;
   }
+  else if('scores_get_all' == command) {
+    log.info(command);
+    og_scores_get_all(res,params.access_token);
+    return;
+  }
   else if('score_get_users' == command) {
     // https://graph.facebook.com/me/games.scores?
     // log.info('score_get: ' + params.users);
@@ -387,12 +406,16 @@ function req_handler(req, res)
     return;
   }
   else if('request_add_ids') {
-    log.debug('request_add_ids ' + params.res);
-    if (params.res) {     
-      res = JSON.parse(unescape(params.res));
-      for(var i = 0; i < res.request_ids.length; ++i) {      
-        db.request_add(res.request_ids[i],null);
+    if (params) {
+      log.debug('request_add_ids ' + params.res);
+      if (params.res) {
+        res = JSON.parse(unescape(params.res));
+        for(var i = 0; i < res.request_ids.length; ++i) {
+          db.request_add(res.request_ids[i],null);
+        }
       }
+    } else {
+      log.debug('request_add_ids: no params');
     }
   } else if('/favicon.ico' == pathname) {
     res.end();

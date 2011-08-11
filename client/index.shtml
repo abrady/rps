@@ -6,14 +6,19 @@
     <script>
       var app_secret      = "{{config.app_secret}}";
       var fb_app_id       = {{config.app_id}};
-      FB._domain.api      = 'https://api.{{config.fb_domain_modifier}}facebook.com/',
-      FB._domain.api_read =  'https://api-read.{{config.fb_domain_modifier}}facebook.com/',
-      FB._domain.cdn      =  (window.location.protocol == 'https:'
-                   ? 'https://s-static.ak.fbcdn.net/'
-                   : 'http://static.ak.fbcdn.net/'),
-      FB._domain.graph    = 'https://graph.{{config.fb_domain_modifier}}facebook.com/',
-      FB._domain.staticfb = 'http://static.ak.facebook.com/',
-      FB._domain.www      = window.location.protocol + '//www.{{config.fb_domain_modifier}}facebook.com/'
+      FB._domain = {
+        api            : 'https://api.{{config.fb_domain_modifier}}facebook.com/',
+        api_read       : 'https://api-read.{{config.fb_domain_modifier}}facebook.com/',
+        cdn            : 'http://static.ak.fbcdn.net/',
+        https_cdn      : 'https://s-static.ak.fbcdn.net/',
+        graph          : 'https://graph.{{config.fb_domain_modifier}}facebook.com/',
+        staticfb       : 'http://static.ak.{{config.fb_domain_modifier}}facebook.com/',
+        https_staticfb : 'https://s-static.ak.{{config.fb_domain_modifier}}facebook.com/',
+        www            : 'http://www.{{config.fb_domain_modifier}}facebook.com/',
+        https_www      : 'https://www.{{config.fb_domain_modifier}}facebook.com/',
+        m              : 'http://m.{{config.fb_domain_modifier}}facebook.com/',
+        https_m        : 'https://m.{{config.fb_domain_modifier}}facebook.com/'
+      };
     </script>
   </head>
   <body class="rps">
@@ -45,7 +50,10 @@
       <!-- </div> -->
       <div id="scores" class="section">
         <h4>Set Score:</h4>
-        <div id="yourScore"></div>
+        <div class="yourScore">
+          <div class="title">Your Score:</div>
+          <div id="myScore" class="score">0</div>
+        </div>
         <input type="text" id="score_value" onkeyup="return score_keyup_listener(event)"></input>
         <br/>
         <button onclick="score_set()">Set Score</button>
@@ -54,12 +62,16 @@
         <h4>Erase All Scores:</h4>
         <button onclick="scores_erase_all()">Erase All Scores</button>
       </div>
+      <div id="scores3" class="section">
+        <h4>Leaderboard:</h4>
+        <div id="score_leaderboard"></div>
+      </div>
       <div id="requests_section" class="section">
         <h4>Send Requests</h4>
         <textarea id="send-to-many-text" rows="2" cols="40"> Rochambeau you for which one of us gets eaten. </textarea>
 
         <br />
-        <button id="send-to-many">Send to Many</button>      
+        <button id="send-to-many">Send to Many</button>
         <script>
           document.getElementById('send-to-many').onclick = function() {
           var txtarea = document.getElementById('send-to-many-text');
@@ -79,7 +91,7 @@
         <!--   document.getElementById('list-pending').onclick = function() { -->
         <!--     FB.api('/me/apprequests', requests_pending_show); -->
         <!--   } -->
-      
+
         <!--   document.getElementById('clear-pending').onclick = function() { -->
         <!--     FB.api('/me/apprequests', requests_clear_handler); -->
         <!--   } -->

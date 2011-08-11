@@ -15,6 +15,19 @@
   float: left;
 }
 
+.section .yourScore {
+  font-size: small;
+  width: 100%;
+}
+
+.section .yourScore .title {
+  float: left;
+}
+
+.section .yourScore .score {
+  float: right;
+}
+
 h4 {
  font-size: 14px;
  margin: 0 0 8px 0;;
