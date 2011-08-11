@@ -147,62 +147,69 @@ function score_keyup_listener(e) {
 }
 
 function score_set() {
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange=function()
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange=function()
+  {
+    if (xmlhttp.readyState==4 && xmlhttp.status==200)
     {
-        if (xmlhttp.readyState==4 && xmlhttp.status==200)
-        {
-            debug_log(xmlhttp.responseText);
-            my_scores_get();
-        }
+      debug_log(xmlhttp.responseText);
+      my_scores_get();
+      scores_get_all();
     }
-    var score = document.getElementById('score_value').value;
-    document.getElementById('myScore').innerHTML = score;
-    xmlhttp.open("GET",'score_set?score='+escape(score)+'&access_token='+escape(FB._session.access_token));
-    xmlhttp.send();
-    score_elt.value = '';
-    return false;
+  }
+  var score_elt = document.getElementById('score_value');
+  var score = score_elt.value;
+  document.getElementById('myScore').innerHTML = score;
+  xmlhttp.open("GET",'score_set?score='+escape(score)+'&access_token='+escape(FB._session.access_token));
+  xmlhttp.send();
+  score_elt.value = '';
+  return false;
 }
 
 function scores_erase_all() {
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange=function()
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange=function()
+  {
+    if (xmlhttp.readyState==4 && xmlhttp.status==200)
     {
-        if (xmlhttp.readyState==4 && xmlhttp.status==200)
-        {
-            debug_log(xmlhttp.responseText);
-        }
+      debug_log(xmlhttp.responseText);
+      my_scores_get();
+      scores_get_all();
     }
-    var score_elt = document.getElementById('score_value');
-    xmlhttp.open("GET",'scores_erase_all?access_token='+escape(FB._session.access_token));
-    xmlhttp.send();
-    score_elt.value = '';
-    return false;
+  }
+  var score_elt = document.getElementById('score_value');
+  xmlhttp.open("GET",'scores_erase_all?access_token='+escape(FB._session.access_token));
+  xmlhttp.send();
+  score_elt.value = '';
+  return false;
 }
 
 function scores_get_all() {
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange=function()
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange=function()
+  {
+    if (xmlhttp.readyState==4 && xmlhttp.status==200)
     {
-        if (xmlhttp.readyState==4 && xmlhttp.status==200)
-        {
-            debug_log("scores_get_all: "+xmlhttp.responseText);
-            var scores = JSON.parse(xmlhttp.responseText);
-            var ol = document.getElementById('score_leaderboard');
-            ol.innerHTML = "<ol></ol>";
-            for(var i = 0; i < scores.data.length; ++i) {
-              var score = scores.data[i];
-              var l = document.createElement('li');
-              l.innerHTML = score.user.name + ": " + score.score;
-              ol.appendChild(l);
-            }
-        }
+      debug_log("scores_get_all: "+xmlhttp.responseText);
+      var scores = JSON.parse(xmlhttp.responseText);
+      var ol = document.createElement('ol');
+      for(var i = 0; i < scores.data.length; ++i) {
+        var score = scores.data[i];
+        var l = document.createElement('li');
+        l.innerHTML = score.user.name + ": " + score.score;
+        ol.appendChild(l);
+      }
+      var root = document.getElementById('score_leaderboard');
+      if (root.lastChild) 
+        root.removeChild(root.lastChild);
+      root.appendChild(ol);
     }
-    var score_elt = document.getElementById('score_value');
-    xmlhttp.open("GET",'scores_get_all?access_token='+escape(FB._session.access_token));
-    xmlhttp.send();
-    score_elt.value = '';
-    return false;
+  }
+  var score_elt = document.getElementById('score_value');
+  xmlhttp.open("GET",'scores_get_all?access_token='+escape(FB._session.access_token));
+  xmlhttp.send();
+  score_elt.value = '';
+  return false;
 }
 
 
