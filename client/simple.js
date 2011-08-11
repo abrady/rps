@@ -35,14 +35,12 @@ function on_cheevos_recv(data) {
 }
 
 // gets all the scores this app has access to
-function my_scores_get() {
-  graph_get('/me/games.scores', my_scores_recv);
+function myscores_get() {
+  graph_get('/me/games.scores', myscores_recv);
 }
 
-function my_scores_recv(data) {
-  var root = document.getElementById('cheevos');
-  var l = document.createElement('ul');
-  debug_log(data);
+function myscores_recv(data) {
+  debug_log("myscores_recv: "+data);
   my_scores = JSON.parse(data);
   d = document.getElementById('myScore');
   var score = 0;
@@ -54,6 +52,29 @@ function my_scores_recv(data) {
     }
   }
   d.innerHTML = score;
+}
+
+function mycheevos_get() {
+  graph_get('/me/games.achieves', mycheevos_recv);
+}
+
+function mycheevos_recv(data) {
+  debug_log("mycheevos_recv: "+data);
+  var root = document.getElementById('myCheevos');
+  var l = document.createElement('ul');
+  my_cheevos = JSON.parse(data);
+  var score = 0;
+  for (var i = 0; i < my_cheevos.data.length; ++i) {
+    var s = my_cheevos.data[i];
+    var a = s.achievement;
+    if (s.application.id == fb_app_id) {
+      var li = document.createElement('li');
+      li.innerHTML = '<a href="'+a.url+'">'+a.title+'</a>';
+      l.appendChild(li);
+    }
+  }
+  root.removeChild(root.lastChild);
+  root.appendChild(l);
 }
 
 function graph_get(graph_path, recv_cb) {
@@ -153,7 +174,7 @@ function score_set() {
     if (xmlhttp.readyState==4 && xmlhttp.status==200)
     {
       debug_log(xmlhttp.responseText);
-      my_scores_get();
+      myscores_get();
       scores_get_all();
     }
   }
@@ -173,7 +194,7 @@ function scores_erase_all() {
     if (xmlhttp.readyState==4 && xmlhttp.status==200)
     {
       debug_log(xmlhttp.responseText);
-      my_scores_get();
+      myscores_get();
       scores_get_all();
     }
   }
@@ -200,7 +221,7 @@ function scores_get_all() {
         ol.appendChild(l);
       }
       var root = document.getElementById('score_leaderboard');
-      if (root.lastChild) 
+      if (root.lastChild)
         root.removeChild(root.lastChild);
       root.appendChild(ol);
     }
@@ -304,22 +325,6 @@ function permissions_validate(perms_string, response) {
   return true;
 }
 
-function on_loggged_in() {
-  fb_logged_in = true;
-  debug_log('access_token: ' + FB._session.access_token);
-
-  var rps = document.getElementById('rps_pre_login');
-  rps.hidden = true;
-
-  rps = document.getElementById('rps_body_root');
-  rps.hidden = false;
-
-//  graph_get('/me/games.achieves', on_cheevos_recv);
-  my_scores_get();
-  scores_get_all();
-//  FB.api('/me/apprequests', requests_show_pending);
-}
-
 // init FB api
 FB.init({
     appId  : fb_app_id,
@@ -352,4 +357,21 @@ if (fb_app_id) {
       }
     }
   );
+}
+
+function on_loggged_in() {
+  fb_logged_in = true;
+  debug_log('access_token: ' + FB._session.access_token);
+
+  var rps = document.getElementById('rps_pre_login');
+  rps.hidden = true;
+
+  rps = document.getElementById('rps_body_root');
+  rps.hidden = false;
+
+//  graph_get('/me/games.achieves', on_cheevos_recv);
+  myscores_get();
+  scores_get_all();
+  mycheevos_get();
+//  FB.api('/me/apprequests', requests_show_pending);
 }

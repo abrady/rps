@@ -41,6 +41,11 @@
         <button onclick="cheevo_delete('winwithrock3')">Delete 'Won With Rock' Achievement</button><br>
         <button onclick="cheevo_delete('winwithpaper3')">Delete 'Won With Paper' Achievement</button><br>
         <button onclick="cheevo_delete('winwithscissors4')">Delete 'Won With Scissors' Achievement</button><br>
+        <p/>
+        <div id="myCheevos">
+          <h4>Earned Achievements</h4>
+          <ul></ul>
+        </div>
       </div>
       <!-- <div id="action_section" class="section"> -->
       <!--   <h4>Give Yourself Actions</h4> -->
