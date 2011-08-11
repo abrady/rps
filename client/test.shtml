@@ -1,0 +1,13 @@
+<head>
+  <link type="text/css" rel="stylesheet" href="/client/test.css" />
+</head>
+<body>
+  <!-- <div class="figure1"> -->
+  <!--   <img src="http://www.w3.org/Style/Examples/007/eiffel.jpg" width="136" height="200" /> -->
+  <!--   <p>scale model of tour de eiffel -->
+  <!-- </div> -->
+  <div class="figure1">
+    <img src="http://www.w3.org/Style/Examples/007/st-tropez.jpg" class="scaled" />
+    <p>scale model of tour de eiffel
+  </div>
+</body>

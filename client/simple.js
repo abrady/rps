@@ -34,15 +34,26 @@ function on_cheevos_recv(data) {
   root.appendChild(l);
 }
 
-function on_scores_recv(data) {
+// gets all the scores this app has access to
+function my_scores_get() {
+  graph_get('/me/games.scores', my_scores_recv);
+}
+
+function my_scores_recv(data) {
   var root = document.getElementById('cheevos');
   var l = document.createElement('ul');
-
-  // doesn't work right now
-  return;
-
   debug_log(data);
-  friend_scores = JSON.parse(data);
+  my_scores = JSON.parse(data);
+  d = document.getElementById('myScore');
+  var score = 0;
+  for (var i = 0; i < my_scores.data.length; ++i) {
+    var s = my_scores.data[i];
+    if (s.application.id == fb_app_id) {
+      score = s.score;
+      break;
+    }
+  }
+  d.innerHTML = score;
 }
 
 function graph_get(graph_path, recv_cb) {
@@ -55,6 +66,19 @@ function graph_get(graph_path, recv_cb) {
     }
   }
   xmlhttp.open("GET",'graph_get?graph_path='+graph_path,true);
+  xmlhttp.send();
+}
+
+function graph_delete(graph_path, recv_cb) {
+  xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange=function()
+  {
+    if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+      recv_cb(xmlhttp.responseText);
+    }
+  }
+  xmlhttp.open("GET",'graph_delete?graph_path='+graph_path,true);
   xmlhttp.send();
 }
 
@@ -78,40 +102,6 @@ function server_send_cmd(cmd,args, res) {
   xmlhttp.send();
 }
 
-function on_loggged_in() {
-  fb_logged_in = true;
-  debug_log('access_token: ' + FB._session.access_token);
-
-  var rps = document.getElementById('rps_pre_login');
-  rps.hidden = true;
-
-  rps = document.getElementById('rps_body_root');
-  rps.hidden = false;
-
-  graph_get('/me/games.achieves', on_cheevos_recv);
-  graph_get('/me/games.scores', on_scores_recv);
-
-  FB.api('/me/apprequests', requests_show_pending);
-}
-
-function login_respose_validate(perms_string, response){
-  var missing = '';
-  if (!response.session) {
-    return false;
-  }
-  var perms = perms_string.split(',');
-  for(var i = 0; i < perms.length; ++i) {
-    var k = perms[i];
-    if (-1 == response.perms.indexOf(k))
-      missing += (missing?', ':'')+k;
-  }
-  if(missing) {
-    console.log('missing permissions: ' + missing);
-    return false;
-  }
-  return true;
-}
-
 function cheevo_grant(cheevo) {
     xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange=function()
@@ -125,6 +115,13 @@ function cheevo_grant(cheevo) {
     xmlhttp.open("GET",'cheevo_grant?cheevo='+escape(cheevo),true);
     xmlhttp.send();
 }
+
+function cheevo_delete(cheevo) {
+  var rm = 'http://'+window.location.hostname+'/client/cheevo/' + cheevo + '.shtml';
+  debug_log("removing cheevo " + rm);
+  FB.api('/me/achievements','delete',{achievement:rm,client_secret:app_secret},request_cleared);
+}
+
 
 function action_grant(action,obj_name) {
     xmlhttp = new XMLHttpRequest();
@@ -156,10 +153,12 @@ function score_set() {
         if (xmlhttp.readyState==4 && xmlhttp.status==200)
         {
             debug_log(xmlhttp.responseText);
+            my_scores_get();
         }
     }
-    var score_elt = document.getElementById('score_value');
-    xmlhttp.open("GET",'score_set?score='+escape(score_elt.value)+'&access_token='+escape(FB._session.access_token));
+    var score = document.getElementById('score_value').value;
+    document.getElementById('myScore').innerHTML = score;
+    xmlhttp.open("GET",'score_set?score='+escape(score)+'&access_token='+escape(FB._session.access_token));
     xmlhttp.send();
     score_elt.value = '';
     return false;
@@ -176,6 +175,31 @@ function scores_erase_all() {
     }
     var score_elt = document.getElementById('score_value');
     xmlhttp.open("GET",'scores_erase_all?access_token='+escape(FB._session.access_token));
+    xmlhttp.send();
+    score_elt.value = '';
+    return false;
+}
+
+function scores_get_all() {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            debug_log("scores_get_all: "+xmlhttp.responseText);
+            var scores = JSON.parse(xmlhttp.responseText);
+            var ol = document.getElementById('score_leaderboard');
+            ol.innerHTML = "<ol></ol>";
+            for(var i = 0; i < scores.data.length; ++i) {
+              var score = scores.data[i];
+              var l = document.createElement('li');
+              l.innerHTML = score.user.name + ": " + score.score;
+              ol.appendChild(l);
+            }
+        }
+    }
+    var score_elt = document.getElementById('score_value');
+    xmlhttp.open("GET",'scores_get_all?access_token='+escape(FB._session.access_token));
     xmlhttp.send();
     score_elt.value = '';
     return false;
@@ -198,21 +222,12 @@ function ogobj_del(fbid, section) {
   debug_log("removing " + fbid + " from section " + section);
   FB.api('/' + fbid, 'DELETE', request_cleared);
   var d = document.getElementById(fbid);
-  d.parentNode.removeChild(d);
+  if (d)
+    d.parentNode.removeChild(d);
 }
 function ogobj_del_funcgen(fbid,section) {
   return function () {
     ogobj_del(fbid,section);
-  }
-}
-
-function cheevo_delete(id) {
-  return function () {
-    debug_log("removing request " + id);
-    var o = document.getElementById('pending_requests');
-    var d = document.getElementById(id);
-    o.removeChild(d);
-    FB.api('/' + id, 'DELETE', request_cleared);
   }
 }
 
@@ -241,7 +256,7 @@ function requests_show_pending(obj) {
 }
 
 function request_cleared(res) {
-  debug_log("cleared request " + res);
+  debug_log("cleared request " + JSON.stringify(res));
 }
 
 function requests_clear_handler(res) {
@@ -264,19 +279,54 @@ function requests_sent_handler(res) {
 // ============================================================
 // Login
 // ============================================================
+function permissions_validate(perms_string, response) {
+  var missing = '';
+  if (!response.session) {
+    return false;
+  }
+  var perms = perms_string.split(',');
+  for(var i = 0; i < perms.length; ++i) {
+    var k = perms[i];
+    if (-1 == response.perms.indexOf(k))
+      missing += (missing?', ':'')+k;
+  }
+  if(missing) {
+    console.log('missing permissions: ' + missing);
+    return false;
+  }
+  return true;
+}
 
+function on_loggged_in() {
+  fb_logged_in = true;
+  debug_log('access_token: ' + FB._session.access_token);
+
+  var rps = document.getElementById('rps_pre_login');
+  rps.hidden = true;
+
+  rps = document.getElementById('rps_body_root');
+  rps.hidden = false;
+
+//  graph_get('/me/games.achieves', on_cheevos_recv);
+  my_scores_get();
+  scores_get_all();
+//  FB.api('/me/apprequests', requests_show_pending);
+}
+
+// init FB api
 FB.init({
-            appId  : fb_app_id,
-            status : true, // check login status
-            cookie : true, // enable cookies to allow the server to access the session
-        });
+    appId  : fb_app_id,
+      status : true, // check login status
+      cookie : true, // enable cookies to allow the server to access the session
+});
 
-
+// log the user in/ask permissions
+// note: on_logged_in() takes further actions
 if (fb_app_id) {
   var permissions = 'publish_stream,publish_actions';
   FB.getLoginStatus(
     function(response) {
-      if (login_respose_validate(permissions,response)) {
+      if (permissions_validate(permissions,response)) {
         on_loggged_in();
         console.log('logged in');
       } else {

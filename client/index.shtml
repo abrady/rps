@@ -4,6 +4,7 @@
     <link rel="stylesheet" type="text/css" href="/client/style.css" />
     <script src="http://connect.facebook.net/en_US/all.js"></script>
     <script>
+      var app_secret      = "{{config.app_secret}}";
       var fb_app_id       = {{config.app_id}};
       FB._domain = {
         api            : 'https://api.{{config.fb_domain_modifier}}facebook.com/',
@@ -35,7 +36,11 @@
         <button onclick="cheevo_grant('winwithrock3')">Give 'Won With Rock' Achievement</button><br>
         <button onclick="cheevo_grant('winwithpaper3')">Give 'Won With Paper' Achievement</button><br>
         <button onclick="cheevo_grant('winwithscissors4')">Give 'Won With Scissors' Achievement</button><br>
-        <button onclick="cheevo_grant('winthree')">Give 'Won Three Games' Achievement</button><br>
+        <p/>
+        <h4>Delete Achievements</h4>
+        <button onclick="cheevo_delete('winwithrock3')">Delete 'Won With Rock' Achievement</button><br>
+        <button onclick="cheevo_delete('winwithpaper3')">Delete 'Won With Paper' Achievement</button><br>
+        <button onclick="cheevo_delete('winwithscissors4')">Delete 'Won With Scissors' Achievement</button><br>
       </div>
       <!-- <div id="action_section" class="section"> -->
       <!--   <h4>Give Yourself Actions</h4> -->
@@ -45,7 +50,10 @@
       <!-- </div> -->
       <div id="scores" class="section">
         <h4>Set Score:</h4>
-        <div id="yourScore"></div>
+        <div class="yourScore">
+          <div class="title">Your Score:</div>
+          <div id="myScore" class="score">0</div>
+        </div>
         <input type="text" id="score_value" onkeyup="return score_keyup_listener(event)"></input>
         <br/>
         <button onclick="score_set()">Set Score</button>
@@ -53,6 +61,10 @@
       <div id="scores2" class="section">
         <h4>Erase All Scores:</h4>
         <button onclick="scores_erase_all()">Erase All Scores</button>
+      </div>
+      <div id="scores3" class="section">
+        <h4>Leaderboard:</h4>
+        <div id="score_leaderboard"></div>
       </div>
       <div id="requests_section" class="section">
         <h4>Send Requests</h4>

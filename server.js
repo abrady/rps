@@ -17,7 +17,7 @@ var log   = require('./util/log');
 var sys   = require("sys");
 var url   = require("url");
 var util  = require('./util');
-log.level = log.DEBUG;//INFO;
+log.level = log.INFO; // DEBUG
 
 function str_from_req(req)
 {
@@ -64,7 +64,7 @@ function graph_get(path,end_cb) {
     path = '/' + path;
   }
   log.info('graph_get:' + g_graph_url + path);
-  data = '';
+  var data = '';
   https.get(
     {
       host: g_graph_url,
@@ -163,7 +163,6 @@ function graph_delete(path,end_cb) {
   graph_req.end();
 }
 
-
 function og_action_get(res, action_name, access_token)
 {
   //    curl 'https://graph.dev.facebook.com/me/superfbrps:paper_covers_rock?access_token=224658110883993%7C2.AQBXJXLB4afinN9o.3600.1305936000.0-827884427%7CE9Fg6j9zpTSlhiSwyYb1_aqc454'
@@ -244,6 +243,20 @@ function og_scores_erase_all(res, access_token)
           res.end ('og_score_erase_all:'+d);
         }
       );
+    }
+  );
+}
+
+function og_scores_get_all(res, access_token)
+{
+  var url = '/'+config.app_id+'/games.scores?'
+    + 'access_token='+escape(access_token)
+    + '&client_secret='+config.app_secret;
+  graph_get(
+    url,
+    function(d) {
+      log.info('og_score_get_all:'+d);
+      res.end (d);
     }
   );
 }
@@ -347,6 +360,15 @@ function req_handler(req, res)
     );
     return;
   }
+  else if('graph_delete' == command) {
+    graph_delete(
+      params.graph_path+'?access_token='+escape(fb_info.access_token),
+      function (data) {
+        res.end(data);
+      }
+    );
+    return;
+  }
   else if('action_grant' == command) {
     // TODO: check list of available actions
     log.info('action_grant');
@@ -370,6 +392,11 @@ function req_handler(req, res)
     og_scores_erase_all(res,params.access_token);
     return;
   }
+  else if('scores_get_all' == command) {
+    log.info(command);
+    og_scores_get_all(res,params.access_token);
+    return;
+  }
   else if('score_get_users' == command) {
     // https://graph.facebook.com/me/games.scores?
     // log.info('score_get: ' + params.users);
@@ -379,12 +406,16 @@ function req_handler(req, res)
     return;
   }
   else if('request_add_ids') {
-    log.debug('request_add_ids ' + params.res);
-    if (params.res) {
-      res = JSON.parse(unescape(params.res));
-      for(var i = 0; i < res.request_ids.length; ++i) {
-        db.request_add(res.request_ids[i],null);
+    if (params) {
+      log.debug('request_add_ids ' + params.res);
+      if (params.res) {
+        res = JSON.parse(unescape(params.res));
+        for(var i = 0; i < res.request_ids.length; ++i) {
+          db.request_add(res.request_ids[i],null);
+        }
       }
+    } else {
+      log.debug('request_add_ids: no params');
     }
   } else if('/favicon.ico' == pathname) {
     res.end();
