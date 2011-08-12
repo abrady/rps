@@ -73,7 +73,7 @@
       </div>
       <div id="requests_section" class="section">
         <h4>Send Requests</h4>
-        <textarea id="send-to-many-text" rows="2" cols="40"> Rochambeau you for which one of us gets eaten. </textarea>
+        <textarea id="send-to-many-text" rows="2" cols="40"> Rochambeau you for dinner. </textarea>
 
         <br />
         <button id="send-to-many">Send to Many</button>
@@ -105,7 +105,8 @@
 
       <div class="section" id="requests_section">
         <h4>Manage Your Requests</h4>
-        <ul style="list-style-type:none" id="pending_requests"/>
+        <div id="pending_requests">
+        </div>
       </div>
     </div>
 
