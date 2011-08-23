@@ -70,6 +70,7 @@
       <div id="scores3" class="section">
         <h4>Leaderboard:</h4>
         <div id="score_leaderboard"></div>
+        <button onclick="scores_get_all()">Refresh Leaderboard</button><br>
       </div>
       <div id="requests_section" class="section">
         <h4>Send Requests</h4>
@@ -109,13 +110,13 @@
         </div>
       </div>
     </div>
-
-    <div id="debug_log_section" class="section">
-      <h4><console>Debug Log:</console></h4>
-      <p id="debug_log" style="padding: 10px; border: grey 1px solid">
+    <p style="clear:both;padding:10px">
+    <div id="debug_log_section" class="debugLog">
+      <h4>Debug Log:</h4>
+      <p id="debug_log">
         {{options.log}}
       </p>
-      <script type="text/javascript" src="/client/simple.js"></script>
     </div>
+    <script type="text/javascript" src="/client/simple.js"></script>
   </body>
 </html>

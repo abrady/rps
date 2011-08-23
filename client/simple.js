@@ -1,9 +1,6 @@
 var fb_logged_in = false;
 
 function debug_log(str) {
-  var str = str.substring(0,80);
-  if (str.length == 80)
-    str += '...';
   var div = document.getElementById('debug_log');
   if (div)
     div.innerHTML += '<span>'+str+"</span><br>";
@@ -13,7 +10,7 @@ function debug_log(str) {
 
 // gets all the scores this app has access to
 function myscores_get() {
-  debug_log('getting my score');
+  debug_log('myscores_get');
   graph_get('/me/games.scores', myscores_recv);
 }
 
@@ -152,8 +149,8 @@ function score_set() {
     if (xmlhttp.readyState==4 && xmlhttp.status==200)
     {
       debug_log(xmlhttp.responseText);
-      myscores_get();
       scores_get_all();
+      myscores_get();
     }
   }
   var score_elt = document.getElementById('score_value');
@@ -185,6 +182,7 @@ function scores_erase_all() {
 
 function scores_get_all() {
   var xmlhttp = new XMLHttpRequest();
+  debug_log("calling scores_get_all");
   xmlhttp.onreadystatechange=function()
   {
     if (xmlhttp.readyState==4 && xmlhttp.status==200)
