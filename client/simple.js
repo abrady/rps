@@ -265,9 +265,10 @@ function ogobj_del_funcgen(fbid,section) {
 }
 
 function requests_recv(obj) {
-  debug_log("got pending pending requests: " + obj.data.length);
+  var len = (obj.data?obj.data.length:0);
+  debug_log("got pending pending requests: " + len);
   var root = document.getElementById('pending_requests');
-  for(var i = 0; i < obj.data.length; ++i) {
+  for(var i = 0; i < len; ++i) {
     var e = document.createElement('div');
     var o = obj.data[i];
     var btn_del = document.createElement('button');

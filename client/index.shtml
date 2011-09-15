@@ -5,7 +5,6 @@
     <!-- <script src="http://connect.facebook.net/en_US/all.js"></script> -->
     <script src="http://www.{{config.fb_domain_modifier}}facebook.com/assets.php/en_US/all.js"></script>
     <script>
-      var app_secret      = "{{config.app_secret}}";
       var fb_app_id       = {{config.app_id}};
       FB._domain = {
         api            : 'http://api.{{config.fb_domain_modifier}}facebook.com/',
@@ -14,12 +13,11 @@
         graph          : 'http://graph.{{config.fb_domain_modifier}}facebook.com/',
         https_staticfb : 'http://s-static.ak.{{config.fb_domain_modifier}}facebook.com/',
         https_www      : 'http://www.{{config.fb_domain_modifier}}facebook.com/',
-        https_m        : 'http://m.{{config.fb_domain_modifier}}facebook.com/'
-        // not https before...
+        https_m        : 'http://m.{{config.fb_domain_modifier}}facebook.com/',
         cdn            : 'http://static.ak.fbcdn.net/',
         staticfb       : 'http://static.ak.{{config.fb_domain_modifier}}facebook.com/',
         www            : 'http://www.{{config.fb_domain_modifier}}facebook.com/',
-        m              : 'http://m.{{config.fb_domain_modifier}}facebook.com/',
+        m              : 'http://m.{{config.fb_domain_modifier}}facebook.com/'
       };
     </script>
   </head>
