@@ -2,9 +2,9 @@
       xmlns:og="http://ogp.me/ns#"
       xmlns:fb="https://www.facebook.com/2008/fbml">
   <head>
-  <meta property="fb:app_id" content="224658110883993" />
+  <meta property="fb:app_id" content="{{config.app_id}}" />
   <meta property="og:url" content="http://{{config.host}}/client/og/rock.shtml" />
-  <meta property="og:type" content="superfbrps:rock" />
+  <meta property="og:type" content="superfbrpsdev:rock" />
   <meta property="og:title" content="Rock" />
   <meta property="og:image" content="http://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Balanced_Rock.jpg/220px-Balanced_Rock.jpg" />
   <meta property="og:description" content="The Rock that makes scissors tremble" />

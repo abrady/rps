@@ -2,22 +2,24 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="/client/style.css" />
-    <script src="http://connect.facebook.net/en_US/all.js"></script>
+    <!-- <script src="http://connect.facebook.net/en_US/all.js"></script> -->
+    <script src="http://www.{{config.fb_domain_modifier}}facebook.com/assets.php/en_US/all.js"></script>
     <script>
       var app_secret      = "{{config.app_secret}}";
       var fb_app_id       = {{config.app_id}};
       FB._domain = {
-        api            : 'https://api.{{config.fb_domain_modifier}}facebook.com/',
-        api_read       : 'https://api-read.{{config.fb_domain_modifier}}facebook.com/',
+        api            : 'http://api.{{config.fb_domain_modifier}}facebook.com/',
+        api_read       : 'http://api-read.{{config.fb_domain_modifier}}facebook.com/',
+        https_cdn      : 'http://s-static.ak.fbcdn.net/',
+        graph          : 'http://graph.{{config.fb_domain_modifier}}facebook.com/',
+        https_staticfb : 'http://s-static.ak.{{config.fb_domain_modifier}}facebook.com/',
+        https_www      : 'http://www.{{config.fb_domain_modifier}}facebook.com/',
+        https_m        : 'http://m.{{config.fb_domain_modifier}}facebook.com/'
+        // not https before...
         cdn            : 'http://static.ak.fbcdn.net/',
-        https_cdn      : 'https://s-static.ak.fbcdn.net/',
-        graph          : 'https://graph.{{config.fb_domain_modifier}}facebook.com/',
         staticfb       : 'http://static.ak.{{config.fb_domain_modifier}}facebook.com/',
-        https_staticfb : 'https://s-static.ak.{{config.fb_domain_modifier}}facebook.com/',
         www            : 'http://www.{{config.fb_domain_modifier}}facebook.com/',
-        https_www      : 'https://www.{{config.fb_domain_modifier}}facebook.com/',
         m              : 'http://m.{{config.fb_domain_modifier}}facebook.com/',
-        https_m        : 'https://m.{{config.fb_domain_modifier}}facebook.com/'
       };
     </script>
   </head>
@@ -37,10 +39,10 @@
         <button onclick="cheevo_grant('winwithpaper3')">Give 'Won With Paper' Achievement</button><br>
         <button onclick="cheevo_grant('winwithscissors4')">Give 'Won With Scissors' Achievement</button><br>
         <p/>
-        <h4>Delete Achievements</h4>
-        <button onclick="cheevo_delete('winwithrock3')">Delete 'Won With Rock' Achievement</button><br>
-        <button onclick="cheevo_delete('winwithpaper3')">Delete 'Won With Paper' Achievement</button><br>
-        <button onclick="cheevo_delete('winwithscissors4')">Delete 'Won With Scissors' Achievement</button><br>
+        <h4>Register Achievements</h4>
+        <button onclick="cheevo_register('winwithrock3')">Register 'Won With Rock' Achievement</button><br>
+        <button onclick="cheevo_register('winwithpaper3')">Register 'Won With Paper' Achievement</button><br>
+        <button onclick="cheevo_register('winwithscissors4')">Register 'Won With Scissors' Achievement</button><br>
         <p/>
         <div id="myCheevos">
           <h4>Earned Achievements</h4>

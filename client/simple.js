@@ -44,7 +44,8 @@ function mycheevos_recv(data) {
     var a = s.achievement;
     if (s.application.id == fb_app_id) {
       var li = document.createElement('li');
-      li.innerHTML = '<a href="'+a.url+'">'+a.title+'</a>';
+      li.innerHTML = '<button onclick="cheevo_delete(\''+a.url+'\')">delete</button>'
+        +'<a href="'+a.url+'">'+a.title+'</a>';
       l.appendChild(li);
     }
   }
@@ -105,17 +106,45 @@ function cheevo_grant(cheevo) {
         if (xmlhttp.readyState==4 && xmlhttp.status==200)
         {
             debug_log(xmlhttp.responseText);
+            mycheevos_get();
         }
     }
 
+    debug_log("granting cheevo " + cheevo);
     xmlhttp.open("GET",'cheevo_grant?cheevo='+escape(cheevo),true);
     xmlhttp.send();
 }
 
+function cheevo_register(cheevo) {
+    xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200)
+        {
+            debug_log(xmlhttp.responseText);
+        }
+    }
+
+    xmlhttp.open("GET",'cheevo_register?cheevo='+escape(cheevo),true);
+    xmlhttp.send();
+}
+
 function cheevo_delete(cheevo) {
-  var rm = 'http://'+window.location.hostname+'/client/cheevo/' + cheevo + '.shtml';
+//  var rm = 'http://'+window.location.hostname+'/client/cheevo/' + cheevo + '.shtml';
+  var rm = cheevo;
+  if (cheevo.indexOf('http') != 0) {
+    rm = 'http://abrady.xen.prgmr.com/client/cheevo/' + cheevo + '.shtml';
+  }
   debug_log("removing cheevo " + rm);
-  FB.api('/me/achievements','delete',{achievement:rm,client_secret:app_secret},request_cleared);
+  FB.api(
+    '/me/achievements',
+    'delete',
+    {achievement:rm,client_secret:app_secret},
+    function(res) {
+      mycheevos_get();
+      request_cleared(res);
+    }
+  );
 }
 
 
