@@ -193,6 +193,23 @@ function og_action_create(res, action_name, object_name, access_token)
   );
 }
 
+// ============================================================
+// cheevos/achievements
+// ============================================================
+
+function og_cheevo_register(cheevo) {
+  var fn = 'client/cheevo/'+fn;
+  if (!fs.fstatSync(fn).isFile()) {
+    log.info('file ' + fn + ' must exist to register cheevo');
+    return false;
+  }
+//  var url = config.host + 
+}
+
+// ============================================================
+// scores
+// ============================================================
+
 function og_score_set(res, score, access_token)
 {
   // https://graph.facebook.com/me/games.scores?

@@ -1,41 +1,16 @@
 var fb_logged_in = false;
 
 function debug_log(str) {
-    var div = document.getElementById('debug_log');
-    if (div)
-        div.innerHTML += '<span>'+str+"</span><br>";
-    if(console)
-        console.log(str);
-}
-
-function on_cheevos_recv(data) {
-  var root = document.getElementById('cheevos');
-  var l = document.createElement('ul');
-
-      // <div id="cheevos" class="section">
-      //   <h4>Your Achievements:</h4>
-      //   <!-- <h4>Your Achievements:</h4> -->
-      // </div>
-
-  return; // not seeing the value here.
-
-  all_cheevos = JSON.parse(data);
-  window.cheevos = [];
-  for (var i = 0; i < all_cheevos.data.length; i++) {
-    var c = all_cheevos.data[i].achievement;
-    var li = document.createElement('li');
-    l.appendChild(li);
-    if (i > 5) {
-      li.innerHTML = '...';
-      break;
-    }
-    li.innerHTML = c.title
-  }
-  root.appendChild(l);
+  var div = document.getElementById('debug_log');
+  if (div)
+    div.innerHTML += '<span>'+str+"</span><br>";
+  if(console)
+    console.log(str);
 }
 
 // gets all the scores this app has access to
 function myscores_get() {
+  debug_log('myscores_get');
   graph_get('/me/games.scores', myscores_recv);
 }
 
@@ -203,8 +178,8 @@ function score_set() {
     if (xmlhttp.readyState==4 && xmlhttp.status==200)
     {
       debug_log(xmlhttp.responseText);
-      myscores_get();
       scores_get_all();
+      myscores_get();
     }
   }
   var score_elt = document.getElementById('score_value');
@@ -236,6 +211,7 @@ function scores_erase_all() {
 
 function scores_get_all() {
   var xmlhttp = new XMLHttpRequest();
+  debug_log("calling scores_get_all");
   xmlhttp.onreadystatechange=function()
   {
     if (xmlhttp.readyState==4 && xmlhttp.status==200)
@@ -288,7 +264,7 @@ function ogobj_del_funcgen(fbid,section) {
   }
 }
 
-function requests_show_pending(obj) {
+function requests_recv(obj) {
   debug_log("got pending pending requests: " + obj.data.length);
   var root = document.getElementById('pending_requests');
   for(var i = 0; i < obj.data.length; ++i) {
@@ -298,14 +274,17 @@ function requests_show_pending(obj) {
     var txt = document.createElement('div');
     btn_del.innerHTML = "X";
     btn_del.style.setProperty('float','left');
+    btn_del.style.setProperty('clear','left');
+    btn_del.style.setProperty('height','10px');
     btn_del.onclick = ogobj_del_funcgen(o.id, "requests");
     e.appendChild(btn_del);
 
     txt.style.setProperty('font-size', '11px');
     txt.innerHTML = "From " + (o.from ? o.from.name : "(no name)") + ", message: " + o.message;
     e.appendChild(txt);
+    e.style.setProperty('padding','5px 0');
 
-    var li = document.createElement('li');
+    var li = document.createElement('div');
     li.appendChild(e);
     li.setAttribute("id",o.id);
     root.appendChild(li);
@@ -398,9 +377,8 @@ function on_loggged_in() {
   rps = document.getElementById('rps_body_root');
   rps.hidden = false;
 
-//  graph_get('/me/games.achieves', on_cheevos_recv);
   myscores_get();
   scores_get_all();
   mycheevos_get();
-//  FB.api('/me/apprequests', requests_show_pending);
+  FB.api('/me/apprequests', requests_recv);
 }
