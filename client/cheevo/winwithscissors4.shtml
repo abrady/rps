@@ -3,14 +3,15 @@
       xmlns:fb="https://www.facebook.com/2008/fbml">
   <head>
     <title>Win With Scissors</title>
-    <meta property="og:type" content="og:games.achievement"/>
+    <meta property="fb:app_id" content="{{config.app_id}}" />
+    <meta property="og:type" content="og:game.achievement"/>
     <meta property="og:url" content="http://abrady.xen.prgmr.com/client/cheevo/winwithscissors4.shtml"/>
     <meta property="og:title" content="Win A Game With Scissors"/>
     <meta property="og:description" content="Cut paper with scissors"/>
     <meta property="og:image" content="http://jewelrymaking.craftgossip.com/files/2010/08/Sugar_Mouse_Scissors.jpg" />
-    <meta property="og:points" content="1" />
+    <meta property="og:points" content="100" />
   </head>
   <body>
-<h1>This Is For Open Graph Only, not for looking at! go-way!!</h1>
+<h1>Not for looking at! go-way!!</h1>
   </body>
 </html>

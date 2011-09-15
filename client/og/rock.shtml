@@ -1,4 +1,7 @@
-<head xmlns:superfbrps="http://apps.facebook.com/superfbrps/ns#">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:og="http://ogp.me/ns#"
+      xmlns:fb="https://www.facebook.com/2008/fbml">
+  <head>
   <meta property="fb:app_id" content="224658110883993" />
   <meta property="og:url" content="http://{{config.host}}/client/og/rock.shtml" />
   <meta property="og:type" content="superfbrps:rock" />
@@ -7,5 +10,6 @@
   <meta property="og:description" content="The Rock that makes scissors tremble" />
 </head>
 <body>
-<h1>This Is For Open Graph Only, not for looking at! go-way!!</h1>
+<h1>Not for looking at! go-way!!</h1>
 </body>
+</html>

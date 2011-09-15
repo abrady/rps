@@ -1,5 +1,5 @@
 <head xmlns:superfbrps="http://apps.facebook.com/superfbrps/ns#">
-  <meta property="fb:app_id" content="224658110883993" />
+  <meta property="fb:app_id" content="{{config.app_id}}" />
   <meta property="og:type" content="superfbrps:paper" />
   <meta property="og:title" content="Paper" />
   <meta property="og:image" content="http://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/ManilaPaper.jpg/220px-ManilaPaper.jpg" />
