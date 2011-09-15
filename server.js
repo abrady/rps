@@ -351,6 +351,27 @@ function req_handler(req, res)
     );
     return;
   }
+  else if('cheevo_register' == command) {
+    log.info('cheevo_update');
+    og_app_access_token(
+      function(access_token) {
+        log.info('cheevo_update: access_token: '+access_token);
+        var cheevo = params.cheevo;
+        var cheevo_url = escape('abrady.xen.prgmr.com/client/cheevo/' + cheevo + '.shtml');
+        var path = '/'+config.app_id+'/achievements';
+        var body = 'achievement='+cheevo_url+'&access_token='+escape(access_token)+'&client_secret='+config.app_secret;
+        graph_post(
+          path,
+          body,
+          function(d) {
+            log.info('og achieves response:'+d);
+            res.end('og achieves response: '+cheevo+' response: '+d);
+          }
+        );
+      }
+    );
+    return;
+  }
   else if('graph_get' == command) {
     graph_get(
       params.graph_path+'?access_token='+escape(fb_info.access_token),
@@ -434,7 +455,7 @@ log.info("connecting to graph url " + g_graph_url);
 http.createServer(
   req_handler
 ).listen(config.http_port);
-log.info('HTTP Server running on port' + config.http_port);
+log.info('HTTP Server running :' + config.http_port);
 
 // curl -k https://localhost:8000/
 var options = {
