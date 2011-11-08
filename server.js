@@ -467,7 +467,7 @@ function req_handler(req, res)
 // ========================================
 // Start the servers
 
-if (0) {
+if (1) {
 log.info("Running app " + config.app_name + " id " + config.app_id);
 log.info("connecting to graph url " + g_graph_url);
 http.createServer(
