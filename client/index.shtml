@@ -2,23 +2,10 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="/client/style.css" />
-    <!-- <script src="http://connect.facebook.net/en_US/all.js"></script> -->
-    <script src="http://www.{{config.fb_domain_modifier}}facebook.com/assets.php/en_US/all.js"></script>
+    <script src="http://connect.facebook.net/en_US/all.js"></script>
+<!--    <script src="http://www.{{config.fb_domain_modifier}}facebook.com/assets.php/en_US/all.js"></script> -->
     <script>
       var fb_app_id       = {{config.app_id}};
-      FB._domain = {
-        api            : 'http://api.{{config.fb_domain_modifier}}facebook.com/',
-        api_read       : 'http://api-read.{{config.fb_domain_modifier}}facebook.com/',
-        https_cdn      : 'http://s-static.ak.fbcdn.net/',
-        graph          : 'http://graph.{{config.fb_domain_modifier}}facebook.com/',
-        https_staticfb : 'http://s-static.ak.{{config.fb_domain_modifier}}facebook.com/',
-        https_www      : 'http://www.{{config.fb_domain_modifier}}facebook.com/',
-        https_m        : 'http://m.{{config.fb_domain_modifier}}facebook.com/',
-        cdn            : 'http://static.ak.fbcdn.net/',
-        staticfb       : 'http://static.ak.{{config.fb_domain_modifier}}facebook.com/',
-        www            : 'http://www.{{config.fb_domain_modifier}}facebook.com/',
-        m              : 'http://m.{{config.fb_domain_modifier}}facebook.com/'
-      };
     </script>
   </head>
   <body class="rps">
@@ -33,9 +20,10 @@
     <div id="rps_body_root" hidden="true">
       <div id="cheevo_section" class="section">
         <h4>Give Yourself Achievements</h4>
-        <button onclick="cheevo_grant('winwithrock3')">Give 'Won With Rock' Achievement</button><br>
-        <button onclick="cheevo_grant('winwithpaper3')">Give 'Won With Paper' Achievement</button><br>
-        <button onclick="cheevo_grant('winwithscissors4')">Give 'Won With Scissors' Achievement</button><br>
+        <button onclick="cheevo_grant('winwithrock3')">Give 'Won With Rock' Achievement (1pt, no ticker)</button><br>
+        <button onclick="cheevo_grant('winwithpaper3')">Give 'Won With Paper' Achievement (100 pts)</button><br>
+        <button onclick="cheevo_grant('winwithscissors4')">Give 'Won With Scissors' Achievement (100 pts)</button><br>
+        <button onclick="cheevo_grant('win')">Give 'Win A Game Of RPS' Achievement (10 pts)</button><br>
         <p/>
         <h4>Register Achievements</h4>
         <button onclick="cheevo_register('winwithrock3')">Register 'Won With Rock' Achievement</button><br>

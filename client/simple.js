@@ -1,5 +1,16 @@
 var fb_logged_in = false;
 
+ge = function(e) {
+  return typeof e == 'string' ? document.getElementById(e) : e; 
+}; 
+$ = function(args) {
+  var e = ge.apply(this, arguments);                                                                                                                                                                                              
+  if (!e) {
+    throw new Error('Tried to get element '+args+'but it is not present in the page. Use ge() instead.');
+  }
+  return e;
+} 
+
 function debug_log(str) {
   var div = document.getElementById('debug_log');
   if (div)
@@ -139,7 +150,7 @@ function cheevo_delete(cheevo) {
   FB.api(
     '/me/achievements',
     'delete',
-    {achievement:rm,client_secret:app_secret},
+    {achievement:rm},
     function(res) {
       mycheevos_get();
       request_cleared(res);
@@ -328,7 +339,7 @@ function permissions_validate(perms_string, response) {
       missing += (missing?', ':'')+k;
   }
   if(missing) {
-    console.log('missing permissions: ' + missing);
+    debug_log('missing permissions: ' + missing);
     return false;
   }
   return true;
@@ -336,36 +347,47 @@ function permissions_validate(perms_string, response) {
 
 // init FB api
 FB.init({
-    appId  : fb_app_id,
-      status : true, // check login status
-      cookie : true, // enable cookies to allow the server to access the session
+          appId  : fb_app_id,
+          status : false, // check login status
+          cookie : true, // enable cookies to allow the server to access the session
+          xfbml  : false,  // parse XFBML
+          frictionlessRequests : true
 });
+
+function on_fblogin_response(response) {
+  if (response.session) {
+    on_loggged_in();
+  } else {
+	debug_log('failed to log in');
+    fb_logged_in = false;
+  }
+}
 
 // log the user in/ask permissions
 // note: on_logged_in() takes further actions
 if (fb_app_id) {
-  var permissions = 'publish_stream,publish_actions';
+  var permissions = 'publish_stream,publish_actions,user_games_activity';
+  debug_log('calling FB.getLoginStatus on app ' + fb_app_id);
   FB.getLoginStatus(
     function(response) {
       if (permissions_validate(permissions,response)) {
         on_loggged_in();
-        console.log('logged in');
+        debug_log('logged in');
       } else {
+        debug_log('need permissions');
         fb_logged_in = false;
-        FB.login(
-          function(response) {
-            if (response.session) {
-              on_loggged_in();
-            } else {
-			  debug_log('failed to log in');
-              fb_logged_in = false;
-            }
-          },
-          {perms:permissions}
-        );
+        $('rps_pre_login').innerHTML = 
+          '<h3>Need Some More Permissions. Press Login Button Please!</h3>\
+          <button onclick="\
+          FB.login(\
+            on_fblogin_response,\
+            {perms:permissions}\
+          )">Login</button>';
       }
     }
   );
+} else {
+  debug_log('fb_app_id not set. cannot log in!!!!');
 }
 
 function on_loggged_in() {
