@@ -468,6 +468,7 @@ function req_handler(req, res)
 // Start the servers
 
 if (1) {
+  config.http_port = process.env.PORT || 3000;
   log.info("Running app " + config.app_name + " id " + config.app_id);
   log.info("connecting to graph url " + g_graph_url);
   http.createServer(
