@@ -1,1 +1,1 @@
-web: node server.js
+rps: node server.js
