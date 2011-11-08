@@ -467,6 +467,7 @@ function req_handler(req, res)
 // ========================================
 // Start the servers
 
+if (0) {
 log.info("Running app " + config.app_name + " id " + config.app_id);
 log.info("connecting to graph url " + g_graph_url);
 http.createServer(
@@ -482,4 +483,14 @@ var options = {
 
 https.createServer(options, req_handler).listen(config.https_port);
 log.info('HTTPS Server running:' + (config.https_port));
+} else {
+var express = require('express');
+var app = express.createServer(express.logger());
 
+app.get('/', req_handler);
+
+var port = process.env.PORT || 3000;
+app.listen(port, function() {
+  console.log("Listening on " + port);
+});
+}
